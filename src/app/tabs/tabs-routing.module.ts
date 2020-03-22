@@ -12,8 +12,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: () =>
-              import('../home/home.module').then(m => m.HomePageModule)
+            redirectTo: '/home'
           }
         ]
       },
@@ -48,11 +47,6 @@ const routes: Routes = [
         ]
       }
     ]
-  },
-  {
-    path: '',
-    redirectTo: '/home',
-    pathMatch: 'full'
   }
 ];
 
