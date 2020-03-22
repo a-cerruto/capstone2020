@@ -4,18 +4,9 @@ import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'tabs',
     component: TabsPage,
     children: [
-      {
-        path: '',
-        children: [
-          {
-            path: '',
-            redirectTo: '/home'
-          }
-        ]
-      },
       {
         path: 'home',
         children: [
@@ -45,8 +36,18 @@ const routes: Routes = [
               import('../subscriptions/subscriptions.module').then(m => m.SubscriptionsPageModule)
           }
         ]
+      },
+      {
+        path: '',
+        redirectTo: '/tabs/home',
+        pathMatch: 'full'
       }
     ]
+  },
+  {
+    path: '',
+    redirectTo: '/tabs/home',
+    pathMatch: 'full'
   }
 ];
 
