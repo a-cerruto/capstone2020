@@ -7,9 +7,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SubscriptionsPage implements OnInit {
 
+  subscriptions = ["Hulu", "HBO"];
+
+  providers = [
+    {name: "Netflix"},
+    {name: "ShowTime"}
+  ];
+
   constructor() { }
 
   ngOnInit() {
   }
+
+
 
 }
