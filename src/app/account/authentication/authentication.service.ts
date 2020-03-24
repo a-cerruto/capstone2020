@@ -35,7 +35,7 @@ export class AuthenticationService {
     // Local development server
     this.serverProtocol = 'http://';
     this.serverHostName = window.location.hostname;
-    this.serverPort = '3000/users';
+    this.serverPort = ':3000/users';
 
     this.serverAddress =
         this.serverProtocol +
