@@ -33,7 +33,7 @@ export class LoginPage implements OnInit {
 
   ionViewWillEnter() {
     if (this.user.isLoggedIn()) {
-      this.router.navigateByUrl('/tabs/home');
+      this.router.navigateByUrl('');
     }
   }
 
@@ -50,7 +50,7 @@ export class LoginPage implements OnInit {
     this.user.login(form).subscribe({
       next: res => {
         console.log(res);
-        this.router.navigateByUrl('/tabs/home');
+        this.router.navigateByUrl('');
       },
       error: err => {
         console.log(err.status);
