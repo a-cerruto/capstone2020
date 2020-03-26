@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { UserService} from './account/authentication/user.service';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -11,43 +12,11 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 })
 export class AppComponent {
 
-  public appPages = [
-    {
-      title: 'Home',
-      url: '',
-      icon: 'home'
-    },
-    {
-      title: 'Account',
-      url: '/account',
-      icon: 'key'
-    },
-    {
-      title: 'Settings',
-      url: '/settings',
-      icon: 'settings'
-    },
-    {
-      title: 'Login',
-      url: '/login',
-      icon: 'log-in'
-    },
-    {
-      title: 'Register',
-      url: '/register',
-      icon: 'person-add'
-    },
-    {
-      title: 'Logout',
-      url: '/logout',
-      icon: 'log-out'
-    }
-  ];
-
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
-    private statusBar: StatusBar
+    private statusBar: StatusBar,
+    private user: UserService
   ) {
     this.initializeApp();
   }
