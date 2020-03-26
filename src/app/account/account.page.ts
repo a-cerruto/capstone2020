@@ -8,11 +8,18 @@ import { UserService } from '../membership/authentication/user.service';
 })
 export class AccountPage implements OnInit {
 
+  private canEdit: boolean;
+
   constructor(
     private user: UserService
-  ) { }
+  ) {
+    this.canEdit = false;
+  }
 
   ngOnInit() {
   }
 
+  toggleEdit() {
+    this.canEdit = !this.canEdit;
+  }
 }
