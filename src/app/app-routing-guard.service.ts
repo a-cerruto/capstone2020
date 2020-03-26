@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot } from '@angular/router';
-import { UserService } from './account/authentication/user.service';
+import { UserService } from './membership/authentication/user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class AppRoutingGuardService implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     if (!this.user.isLoggedIn()) {
-      this.router.navigateByUrl('login');
+      this.router.navigateByUrl('login').then();
       return false;
     }
     return true;

@@ -1,17 +1,19 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
     <ion-title>Subscriptions</ion-title>
   </ion-toolbar>
-
 </ion-header>
 
 <ion-content>
 
   <!-- List of current subscriptions -->
-   <ion-grid>
-     <ion-row>
-       <ion-col><header>Current Subscriptions</header></ion-col>
-     </ion-row>
+  <ion-grid>
+    <ion-row>
+      <ion-col><header>Current Subscriptions</header></ion-col>
+    </ion-row>
     <ion-row>
       <ion-col>
         <ion-list>
@@ -42,16 +44,5 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button>
-      <ion-icon name="key"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-list side="top">
-      <ion-fab-button id="log-out"><ion-icon name="log-out"></ion-icon></ion-fab-button>
-      <ion-fab-button [routerLink]="['/register']"><ion-icon name="person-add"></ion-icon></ion-fab-button>
-      <ion-fab-button [routerLink]="['/login']"><ion-icon name="log-in"></ion-icon></ion-fab-button>
-      <ion-fab-button [routerLink]="['/account']"><ion-icon name="settings"></ion-icon></ion-fab-button>
-    </ion-fab-list>
-  </ion-fab>
+
 </ion-content>

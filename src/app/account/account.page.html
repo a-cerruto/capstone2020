@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Account</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row class="ion-justify-content-center">
+      <ion-col size-md="6" size-lg="5" size-xs="12">
+        <div class="ion-text-center">
+          <h3>Details</h3>
+        </div>
+        <ion-row class="ion-justify-content-end">
+          <ion-button size="small" color="primary" (click)="toggleEdit()">
+            <ion-icon slot="icon-only" [name]="canEdit ? 'lock-open':'lock-closed'"></ion-icon>
+          </ion-button>
+        </ion-row>
+        <ion-item>
+          <ion-label>Email:</ion-label>
+          <ion-label>{{user.getEmail()}}</ion-label>
+          <ion-button *ngIf="canEdit">Edit</ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-label>Username:</ion-label>
+          <ion-label>{{user.getUsername()}}</ion-label>
+          <ion-button *ngIf="canEdit">Edit</ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-label>Password:</ion-label>
+          <ion-label>****************</ion-label>
+          <ion-button *ngIf="canEdit">Edit</ion-button>
+        </ion-item>
+        <ion-row class="ion-justify-content-end">
+        </ion-row>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

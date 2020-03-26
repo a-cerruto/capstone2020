@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
-import { ToastService } from '../../global/toast.service';
-import { LoadingService } from '../../global/loading.service';
-import { FormService } from '../../global/form.service';
-import { UserService } from '../../account/authentication/user.service';
+import { ToastService } from '../../global/services/toast.service';
+import { LoadingService } from '../../global/services/loading.service';
+import { FormService } from '../../global/services/form.service';
+import { UserService } from '../authentication/user.service';
 
 @Component({
   selector: 'app-login',
@@ -33,13 +33,13 @@ export class LoginPage implements OnInit {
 
   ionViewWillEnter() {
     if (this.user.isLoggedIn()) {
-      this.router.navigateByUrl('');
+      this.router.navigateByUrl('').then();
     }
   }
 
   ionViewWillLeave() {
-    this.toastService.dismiss();
-    this.loadingService.dismiss();
+    this.toastService.dismiss().then();
+    this.loadingService.dismiss().then();
   }
 
   async login(form) {

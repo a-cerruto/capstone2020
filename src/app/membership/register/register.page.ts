@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
-import { ToastService } from '../../global/toast.service';
-import { LoadingService } from '../../global/loading.service';
-import { FormService } from '../../global/form.service';
-import { AuthenticationService } from '../../account/authentication/authentication.service';
+import { ToastService } from '../../global/services/toast.service';
+import { LoadingService } from '../../global/services/loading.service';
+import { FormService } from '../../global/services/form.service';
+import { AuthenticationService } from '../authentication/authentication.service';
+import { UserService} from '../authentication/user.service';
 
 @Component({
   selector: 'app-register',
@@ -22,7 +23,8 @@ export class RegisterPage implements OnInit {
       private router: Router,
       private toastService: ToastService,
       private loadingService: LoadingService,
-      private authentication: AuthenticationService
+      private authentication: AuthenticationService,
+      private user: UserService
   ) {
     this.registerForm = FormService.registerForm();
     this.validationMessages = FormService.validationMessages();
@@ -31,6 +33,12 @@ export class RegisterPage implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
+    if (this.user.isLoggedIn()) {
+      this.router.navigateByUrl('').then();
+    }
   }
 
   ionViewWillLeave() {
