@@ -14,7 +14,7 @@ export class AppRoutingGuardService implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     if (!this.user.isLoggedIn()) {
-      this.router.navigateByUrl('login');
+      this.router.navigateByUrl('login').then();
       return false;
     }
     return true;

@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import {AppRoutingGuardService} from "./app-routing-guard.service";
 
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
+    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule),
+    canActivate: [AppRoutingGuardService]
   },
   {
     path: 'login',
@@ -16,7 +18,8 @@ const routes: Routes = [
   },
   {
     path: 'account',
-    loadChildren: () => import('./account/account.module').then( m => m.AccountPageModule)
+    loadChildren: () => import('./account/account.module').then( m => m.AccountPageModule),
+    canActivate: [AppRoutingGuardService]
   },
   {
     path: 'settings',
