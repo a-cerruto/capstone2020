@@ -13,6 +13,7 @@ export class UserService {
 
   private id: string;
   private email: string;
+  private username: string;
 
   constructor(
       private router: Router,
@@ -54,5 +55,13 @@ export class UserService {
       console.log('id: ' + this.id);
       console.log('email: ' + this.email);
     });
+  }
+
+  getEmail() {
+    return this.email;
+  }
+
+  getUsername() {
+    return this.username;
   }
 }
