@@ -33,13 +33,13 @@ export class LoginPage implements OnInit {
 
   ionViewWillEnter() {
     if (this.user.isLoggedIn()) {
-      this.router.navigateByUrl('');
+      this.router.navigateByUrl('').then();
     }
   }
 
   ionViewWillLeave() {
-    this.toastService.dismiss();
-    this.loadingService.dismiss();
+    this.toastService.dismiss().then();
+    this.loadingService.dismiss().then();
   }
 
   async login(form) {
