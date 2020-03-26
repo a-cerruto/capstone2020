@@ -12,7 +12,7 @@ export class UserService {
   private loggedIn = false;
 
   private id: string;
-  private name: string;
+  private email: string;
 
   constructor(
       private router: Router,
@@ -49,10 +49,10 @@ export class UserService {
     this.storage.ready().then(async () => {
       user = await this.storage.get('USER');
       this.id = user.id;
-      this.name = user.name;
+      this.email = user.email;
       console.log('user: ' + user);
       console.log('id: ' + this.id);
-      console.log('name: ' + this.name);
+      console.log('email: ' + this.email);
     });
   }
 }
