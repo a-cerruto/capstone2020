@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
-import { ToastService } from '../../global/toast.service';
-import { LoadingService } from '../../global/loading.service';
-import { FormService } from '../../global/form.service';
+import { ToastService } from '../../global/services/toast.service';
+import { LoadingService } from '../../global/services/loading.service';
+import { FormService } from '../../global/services/form.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 
 @Component({
