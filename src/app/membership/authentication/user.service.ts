@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
+import { LoadingService} from '../../global/services/loading.service';
 import { AuthenticationService } from './authentication.service';
 
 @Injectable({
@@ -13,7 +15,9 @@ export class UserService {
   private name: string;
 
   constructor(
+      private router: Router,
       private storage: Storage,
+      private loading: LoadingService,
       private authentication: AuthenticationService
   ) {
     this.authentication.isLoggedIn().subscribe(async loggedIn => {
@@ -30,7 +34,10 @@ export class UserService {
   }
 
   async logout() {
+    await this.loading.getLoading('Logging out...');
     await this.authentication.logout();
+    await this.loading.dismiss();
+    await this.router.navigateByUrl('/login');
   }
 
   isLoggedIn() {

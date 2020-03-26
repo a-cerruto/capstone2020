@@ -27,4 +27,8 @@ export class AppComponent {
       this.splashScreen.hide();
     });
   }
+
+  logout() {
+    this.user.logout().then();
+  }
 }
