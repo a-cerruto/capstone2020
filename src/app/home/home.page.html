@@ -1,11 +1,21 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="end">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Home</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-tabs>
 
-<ion-content>
-</ion-content>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="browse">
+      <ion-icon name="search"></ion-icon>
+      <ion-label>Browse</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="list">
+      <ion-icon name="list"></ion-icon>
+      <ion-label>List</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="subscriptions">
+      <ion-icon name="wallet"></ion-icon>
+      <ion-label>Subscriptions</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+
+</ion-tabs>
+

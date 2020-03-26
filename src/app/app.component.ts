@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { UserService} from './account/authentication/user.service';
+import { UserService} from './membership/authentication/user.service';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';

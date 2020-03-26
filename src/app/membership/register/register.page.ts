@@ -4,7 +4,7 @@ import { FormGroup } from '@angular/forms';
 import { ToastService } from '../../global/toast.service';
 import { LoadingService } from '../../global/loading.service';
 import { FormService } from '../../global/form.service';
-import { AuthenticationService } from '../../account/authentication/authentication.service';
+import { AuthenticationService } from '../authentication/authentication.service';
 
 @Component({
   selector: 'app-register',

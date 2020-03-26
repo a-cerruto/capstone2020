@@ -4,7 +4,7 @@ import { FormGroup } from '@angular/forms';
 import { ToastService } from '../../global/toast.service';
 import { LoadingService } from '../../global/loading.service';
 import { FormService } from '../../global/form.service';
-import { UserService } from '../../account/authentication/user.service';
+import { UserService } from '../authentication/user.service';
 
 @Component({
   selector: 'app-login',
