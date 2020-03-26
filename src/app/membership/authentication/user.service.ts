@@ -51,9 +51,11 @@ export class UserService {
       user = await this.storage.get('USER');
       this.id = user.id;
       this.email = user.email;
+      this.username = user.username;
       console.log('user: ' + user);
       console.log('id: ' + this.id);
       console.log('email: ' + this.email);
+      console.log('username: ' + this.username);
     });
   }
 
