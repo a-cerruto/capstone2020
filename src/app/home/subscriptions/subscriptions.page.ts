@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from '../../membership/authentication/user.service';
 
 @Component({
   selector: 'app-subscriptions',
@@ -14,7 +15,9 @@ export class SubscriptionsPage implements OnInit {
     {name: 'ShowTime'}
   ];
 
-  constructor() { }
+  
+
+  constructor(private user: UserService) { }
 
   ngOnInit() {
   }
