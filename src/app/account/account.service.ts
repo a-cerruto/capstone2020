@@ -47,5 +47,33 @@ export class AccountService {
       })
     );
   }
+
+  updateUsername(userData: UserUpdateData): Observable<User> {
+    return this.http.post<User>(this.serverAddress + '/update/username', userData).pipe(
+      tap(async (res: User) => {
+        if (res) {
+          this.storage.ready().then(async () => {
+            this.storage.set('USER', res).then(() => {
+              this.user.getDetails();
+            });
+          });
+        }
+      })
+    );
+  }
+
+  updatePassword(userData: UserUpdateData): Observable<User> {
+    return this.http.post<User>(this.serverAddress + '/update/password', userData).pipe(
+      tap(async (res: User) => {
+        if (res) {
+          this.storage.ready().then(async () => {
+            this.storage.set('USER', res).then(() => {
+              this.user.getDetails();
+            });
+          });
+        }
+      })
+    );
+  }
 }
 

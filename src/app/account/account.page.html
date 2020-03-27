@@ -37,18 +37,74 @@
                     (click)="updateEmail(emailForm)">
           Update Email
         </ion-button>
-        <ion-item>
-          <ion-icon slot="start" name="person"></ion-icon>
-          <ion-label *ngIf="!editUsername">{{user.getUsername()}}</ion-label>
-          <ion-input *ngIf="editUsername"></ion-input>
-          <ion-button slot="end" *ngIf="edit" (click)="canEditUsername()">Edit</ion-button>
-        </ion-item>
-        <ion-item>
-          <ion-icon slot="start" name="lock-closed"></ion-icon>
-          <ion-label *ngIf="!editPassword">****************</ion-label>
-          <ion-input *ngIf="editPassword"></ion-input>
-          <ion-button slot="end" *ngIf="edit" (click)="canEditPassword()">Edit</ion-button>
-        </ion-item>
+        <form [formGroup]="usernameForm">
+          <ion-item>
+            <ion-icon slot="start" name="person"></ion-icon>
+            <ion-label *ngIf="!editUsername">{{user.getUsername()}}</ion-label>
+            <ion-input *ngIf="editUsername" formControlName="username"></ion-input>
+            <ion-button slot="end" *ngIf="edit" (click)="canEditUsername()">Edit</ion-button>
+          </ion-item>
+          <div *ngFor="let validation of validationMessages['username']">
+            <ion-item lines="none" *ngIf="usernameForm.controls.username.hasError(validation['type']) && usernameForm.controls.username.touched && editUsername">
+              <ion-text color="danger">
+                <sub>*{{ validation['message'] }}</sub>
+              </ion-text>
+            </ion-item>
+          </div>
+        </form>
+        <ion-button *ngIf="editUsername"
+                    size="small"
+                    type="submit"
+                    expand="block"
+                    [disabled]="usernameForm.invalid || buttonPressed"
+                    (click)="updateUsername(usernameForm)">
+          Update Username
+        </ion-button>
+        <form [formGroup]="passwordForm">
+          <ion-item>
+            <ion-icon slot="start" name="lock-closed"></ion-icon>
+            <ion-label *ngIf="!editPassword">****************</ion-label>
+            <ion-input *ngIf="editPassword" formControlName="old" type="password" placeholder="Old Password"></ion-input>
+            <ion-button slot="end" *ngIf="edit" (click)="canEditPassword()">Edit</ion-button>
+          </ion-item>
+          <div *ngFor="let validation of validationMessages['password']">
+            <ion-item lines="none" *ngIf="passwordForm.controls.old.hasError(validation['type']) && passwordForm.controls.old.touched">
+              <ion-text color="danger">
+                <sub>*{{ validation['message'] }}</sub>
+              </ion-text>
+            </ion-item>
+          </div>
+          <div formGroupName="password">
+            <ion-item *ngIf="editPassword">
+              <ion-icon slot="start" name="key-outline"></ion-icon>
+              <ion-input formControlName="set" type="password" placeholder="New Password"></ion-input>
+            </ion-item>
+            <ion-item *ngIf="editPassword">
+              <ion-icon slot="start" name="key"></ion-icon>
+              <ion-input formControlName="confirm" type="password" placeholder="Confirm New Password"></ion-input>
+            </ion-item>
+          </div>
+          <div *ngFor="let validation of validationMessages['password']">
+            <ion-item lines="none" *ngIf="passwordForm.controls.password.get('set').hasError(validation['type']) && passwordForm.controls.password.get('set').touched">
+              <ion-text color="danger">
+                <sub>*{{ validation['message'] }}</sub>
+              </ion-text>
+            </ion-item>
+          </div>
+          <ion-item lines="none" *ngIf="passwordForm.controls.password.errors !== null && passwordForm.controls.password.get('confirm').touched">
+            <ion-text color="danger">
+              <sub>*{{ validationMessages['confirm']['message']}}</sub>
+            </ion-text>
+          </ion-item>
+        </form>
+        <ion-button *ngIf="editPassword"
+                    size="small"
+                    type="submit"
+                    expand="block"
+                    [disabled]="passwordForm.invalid || buttonPressed"
+                    (click)="updatePassword(passwordForm)">
+          Update Password
+        </ion-button>
         <ion-row class="ion-justify-content-end">
           <ion-button size="small" color="primary" (click)="toggleEdit()">
             <ion-icon slot="icon-only" [name]="edit ? 'lock-open':'lock-closed'"></ion-icon>

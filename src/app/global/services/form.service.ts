@@ -46,10 +46,13 @@ export class FormService {
 
   static passwordForm() {
     return new FormGroup({
-      set: this.getPasswordSetFC(),
-      confirm: this.getPasswordConfirmFC()
-    }, (formGroup: FormGroup) => {
-      return PasswordValidator.isEqual(formGroup);
+      old: this.getPasswordConfirmFC(),
+      password: new FormGroup({
+        set: this.getPasswordSetFC(),
+        confirm: this.getPasswordConfirmFC()
+      }, (formGroup: FormGroup) => {
+        return PasswordValidator.isEqual(formGroup);
+      })
     });
   }
 

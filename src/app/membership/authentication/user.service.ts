@@ -59,7 +59,7 @@ export class UserService {
     });
   }
 
-  getID() {
+  getId() {
     return this.id;
   }
 
