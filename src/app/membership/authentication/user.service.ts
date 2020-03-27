@@ -11,7 +11,7 @@ export class UserService {
 
   private loggedIn = false;
 
-  private id: string;
+  private id: number;
   private email: string;
   private username: string;
 
@@ -57,6 +57,10 @@ export class UserService {
       console.log('email: ' + this.email);
       console.log('username: ' + this.username);
     });
+  }
+
+  getID() {
+    return this.id;
   }
 
   getEmail() {

@@ -14,10 +14,10 @@ export class ToastService {
     } catch (e) {}
   }
 
-  showRegisterSuccess() {
+  showSuccess(msg: string) {
     this.dismiss().then(() => {
       this.tc.create({
-        message: 'Account creation successful!',
+        message: msg,
         duration: 5000,
         position: 'top',
         color: 'success'
