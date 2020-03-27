@@ -18,7 +18,7 @@
           <ion-item>
             <ion-icon slot="start" name="mail"></ion-icon>
             <ion-label *ngIf="!editEmail">{{user.getEmail()}}</ion-label>
-            <ion-input *ngIf="editEmail" formControlName="email" type="email"></ion-input>
+            <ion-input *ngIf="editEmail" formControlName="email" type="email" placeholder="New Email"></ion-input>
             <ion-button slot="end" *ngIf="edit" (click)="canEditEmail()">Edit</ion-button>
           </ion-item>
           <div *ngFor="let validation of validationMessages['email']">
@@ -30,7 +30,6 @@
           </div>
         </form>
         <ion-button *ngIf="editEmail"
-                    size="small"
                     type="submit"
                     expand="block"
                     [disabled]="emailForm.invalid || buttonPressed"
@@ -41,7 +40,7 @@
           <ion-item>
             <ion-icon slot="start" name="person"></ion-icon>
             <ion-label *ngIf="!editUsername">{{user.getUsername()}}</ion-label>
-            <ion-input *ngIf="editUsername" formControlName="username"></ion-input>
+            <ion-input *ngIf="editUsername" formControlName="username" placeholder="New Username"></ion-input>
             <ion-button slot="end" *ngIf="edit" (click)="canEditUsername()">Edit</ion-button>
           </ion-item>
           <div *ngFor="let validation of validationMessages['username']">
@@ -53,7 +52,6 @@
           </div>
         </form>
         <ion-button *ngIf="editUsername"
-                    size="small"
                     type="submit"
                     expand="block"
                     [disabled]="usernameForm.invalid || buttonPressed"
@@ -98,7 +96,6 @@
           </ion-item>
         </form>
         <ion-button *ngIf="editPassword"
-                    size="small"
                     type="submit"
                     expand="block"
                     [disabled]="passwordForm.invalid || buttonPressed"
@@ -106,7 +103,7 @@
           Update Password
         </ion-button>
         <ion-row class="ion-justify-content-end">
-          <ion-button size="small" color="primary" (click)="toggleEdit()">
+          <ion-button size="small" color="dark" (click)="toggleEdit()">
             <ion-icon slot="icon-only" [name]="edit ? 'lock-open':'lock-closed'"></ion-icon>
           </ion-button>
         </ion-row>
