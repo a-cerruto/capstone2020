@@ -14,27 +14,45 @@
         <div class="ion-text-center">
           <h3>Details</h3>
         </div>
+        <form [formGroup]="emailForm">
+          <ion-item>
+            <ion-icon slot="start" name="mail"></ion-icon>
+            <ion-label *ngIf="!editEmail">{{user.getEmail()}}</ion-label>
+            <ion-input *ngIf="editEmail" formControlName="email" type="email"></ion-input>
+            <ion-button slot="end" *ngIf="edit" (click)="canEditEmail()">Edit</ion-button>
+          </ion-item>
+          <div *ngFor="let validation of validationMessages['email']">
+            <ion-item lines="none" *ngIf="emailForm.controls.email.hasError(validation['type']) && emailForm.controls.email.touched && editEmail">
+              <ion-text color="danger">
+                <sub>*{{ validation['message'] }}</sub>
+              </ion-text>
+            </ion-item>
+          </div>
+        </form>
+        <ion-button *ngIf="editEmail"
+                    size="small"
+                    type="submit"
+                    expand="block"
+                    [disabled]="emailForm.invalid || buttonPressed"
+                    (click)="updateEmail(emailForm)">
+          Update Email
+        </ion-button>
+        <ion-item>
+          <ion-icon slot="start" name="person"></ion-icon>
+          <ion-label *ngIf="!editUsername">{{user.getUsername()}}</ion-label>
+          <ion-input *ngIf="editUsername"></ion-input>
+          <ion-button slot="end" *ngIf="edit" (click)="canEditUsername()">Edit</ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="lock-closed"></ion-icon>
+          <ion-label *ngIf="!editPassword">****************</ion-label>
+          <ion-input *ngIf="editPassword"></ion-input>
+          <ion-button slot="end" *ngIf="edit" (click)="canEditPassword()">Edit</ion-button>
+        </ion-item>
         <ion-row class="ion-justify-content-end">
           <ion-button size="small" color="primary" (click)="toggleEdit()">
-            <ion-icon slot="icon-only" [name]="canEdit ? 'lock-open':'lock-closed'"></ion-icon>
+            <ion-icon slot="icon-only" [name]="edit ? 'lock-open':'lock-closed'"></ion-icon>
           </ion-button>
-        </ion-row>
-        <ion-item>
-          <ion-label>Email:</ion-label>
-          <ion-label>{{user.getEmail()}}</ion-label>
-          <ion-button *ngIf="canEdit" (click)="updateEmail(form)">Edit</ion-button>
-        </ion-item>
-        <ion-item>
-          <ion-label>Username:</ion-label>
-          <ion-label>{{user.getUsername()}}</ion-label>
-          <ion-button *ngIf="canEdit" (click)="updateUsername(form)">Edit</ion-button>
-        </ion-item>
-        <ion-item>
-          <ion-label>Password:</ion-label>
-          <ion-label>****************</ion-label>
-          <ion-button *ngIf="canEdit" (click)="updatePassword(form)">Edit</ion-button>
-        </ion-item>
-        <ion-row class="ion-justify-content-end">
         </ion-row>
       </ion-col>
     </ion-row>

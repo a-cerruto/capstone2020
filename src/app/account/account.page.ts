@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { FormGroup } from '@angular/forms';
 import { LoadingService } from '../global/services/loading.service';
@@ -17,9 +18,15 @@ export class AccountPage implements OnInit {
   private emailForm: FormGroup;
   private usernameForm: FormGroup;
   private passwordForm: FormGroup;
-  private canEdit: boolean;
+  private validationMessages: any;
+  private edit: boolean;
+  private editEmail: boolean;
+  private editUsername: boolean;
+  private editPassword: boolean;
+  private buttonPressed: boolean;
 
   constructor(
+    private router: Router,
     private storage: Storage,
     private loading: LoadingService,
     private toast: ToastService,
@@ -29,32 +36,56 @@ export class AccountPage implements OnInit {
     this.emailForm = FormService.emailForm();
     this.usernameForm = FormService.usernameForm();
     this.passwordForm = FormService.passwordForm();
-    this.canEdit = false;
+    this.validationMessages = FormService.validationMessages();
+    this.edit = false;
+    this.editEmail = false;
+    this.editUsername = false;
+    this.editPassword = false;
+    this.buttonPressed = false;
   }
 
   ngOnInit() {
   }
 
   toggleEdit() {
-    this.canEdit = !this.canEdit;
+    this.edit = !this.edit;
+  }
+
+  canEditEmail() {
+    this.editEmail = !this.editEmail;
+  }
+
+  canEditUsername() {
+    this.editUsername = !this.editUsername;
+  }
+
+  canEditPassword() {
+    this.editPassword = !this.editPassword;
+  }
+
+  resetButtons() {
+    this.edit = this.editEmail = this.editUsername = this.editPassword = false;
   }
 
   async updateEmail(form) {
+    this.buttonPressed = true;
     await this.loading.getLoading('Updating Email...');
     const value = form.value;
     const id = this.user.getID();
     this.account.updateEmail({value, id}).subscribe( {
       next: async res => {
         console.log(res);
-        this.user.getDetails();
         this.loading.dismiss().then(() => {
-          this.toast.showSuccess('Email has been updated to ' + this.user.getEmail());
+          this.router.navigateByUrl('/account');
+          this.toast.showSuccess('Email has been updated to ' + value.email);
+          this.resetButtons();
         });
       },
       error: async err => {
         console.log(err.status);
         this.loading.dismiss().then(() => {
           this.toast.showError(err.status);
+          this.buttonPressed = false;
         });
       }
     });

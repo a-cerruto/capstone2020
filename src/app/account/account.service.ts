@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 
 import { Storage } from '@ionic/storage';
 
+import { UserService } from '../membership/authentication/user.service';
 import { User } from '../membership/authentication/user';
 import { UserUpdateData } from './user-update-data';
 
@@ -20,7 +21,8 @@ export class AccountService {
 
   constructor(
     private http: HttpClient,
-    private storage: Storage
+    private storage: Storage,
+    private user: UserService
   ) {
     this.serverProtocol = 'http://';
     this.serverHostName = window.location.hostname;
@@ -37,7 +39,9 @@ export class AccountService {
       tap(async (res: User) => {
         if (res) {
           this.storage.ready().then(async () => {
-            await this.storage.set('USER', res);
+            this.storage.set('USER', res).then(() => {
+              this.user.getDetails();
+            });
           });
         }
       })
