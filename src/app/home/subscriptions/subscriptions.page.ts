@@ -20,7 +20,6 @@ export class SubscriptionsPage implements OnInit {
   ];
 
   private lastSelected: string;
-  private selectValue: string;
 
   constructor(private user: UserService) { 
     this.subscriptions = this.getCurrentSubs();
