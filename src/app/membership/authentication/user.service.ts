@@ -48,8 +48,7 @@ export class UserService {
   getDetails() {
     let user;
     this.storage.ready().then(async () => {
-      user = await this.storage.get('USER');
-      if (!user) { user = await this.storage.get('USER'); }
+      while (!user) { user = await this.storage.get('USER'); }
       this.id = user.id;
       this.email = user.email;
       this.username = user.username;

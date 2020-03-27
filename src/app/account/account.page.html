@@ -19,7 +19,7 @@
             <ion-icon slot="start" name="mail"></ion-icon>
             <ion-label *ngIf="!editEmail">{{user.getEmail()}}</ion-label>
             <ion-input *ngIf="editEmail" formControlName="email" type="email" placeholder="New Email"></ion-input>
-            <ion-button slot="end" *ngIf="edit" (click)="canEditEmail()">Edit</ion-button>
+            <ion-button slot="end" *ngIf="edit && !editUsername && !editPassword" (click)="canEditEmail()">Edit</ion-button>
           </ion-item>
           <div *ngFor="let validation of validationMessages['email']">
             <ion-item lines="none" *ngIf="emailForm.controls.email.hasError(validation['type']) && emailForm.controls.email.touched && editEmail">
@@ -41,7 +41,7 @@
             <ion-icon slot="start" name="person"></ion-icon>
             <ion-label *ngIf="!editUsername">{{user.getUsername()}}</ion-label>
             <ion-input *ngIf="editUsername" formControlName="username" placeholder="New Username"></ion-input>
-            <ion-button slot="end" *ngIf="edit" (click)="canEditUsername()">Edit</ion-button>
+            <ion-button slot="end" *ngIf="edit && !editEmail && !editPassword" (click)="canEditUsername()">Edit</ion-button>
           </ion-item>
           <div *ngFor="let validation of validationMessages['username']">
             <ion-item lines="none" *ngIf="usernameForm.controls.username.hasError(validation['type']) && usernameForm.controls.username.touched && editUsername">
@@ -63,7 +63,7 @@
             <ion-icon slot="start" name="lock-closed"></ion-icon>
             <ion-label *ngIf="!editPassword">****************</ion-label>
             <ion-input *ngIf="editPassword" formControlName="old" type="password" placeholder="Old Password"></ion-input>
-            <ion-button slot="end" *ngIf="edit" (click)="canEditPassword()">Edit</ion-button>
+            <ion-button slot="end" *ngIf="edit && !editEmail && !editUsername" (click)="canEditPassword()">Edit</ion-button>
           </ion-item>
           <div *ngFor="let validation of validationMessages['password']">
             <ion-item lines="none" *ngIf="passwordForm.controls.old.hasError(validation['type']) && passwordForm.controls.old.touched">
