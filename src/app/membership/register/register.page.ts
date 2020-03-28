@@ -44,7 +44,7 @@ export class RegisterPage implements OnInit {
   ionViewWillLeave() {
     this.toastService.dismiss().then(() => {
       if (this.accountCreated) {
-        this.toastService.showRegisterSuccess();
+        this.toastService.showSuccess('Account creation successful!');
       }
     });
   }

@@ -11,30 +11,11 @@ export class FormService {
 
   static registerForm() {
     return new FormGroup({
-      email: new FormControl(
-          '',
-          Validators.compose([
-              Validators.email,
-              Validators.required
-          ])
-      ),
-      username: new FormControl(
-        '',
-        Validators.compose([
-          Validators.pattern('^[a-zA-Z0-9 ]*$'),
-          Validators.required
-        ])
-      ),
+      email: this.getEmailFC(),
+      username: this.getUsernameFC(),
       password: new FormGroup({
-          set: new FormControl('',
-            Validators.compose([
-                Validators.pattern('^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$'),
-                Validators.required
-            ])
-          ),
-          confirm: new FormControl('',
-            Validators.required
-          )
+          set: this.getPasswordSetFC(),
+          confirm: this.getPasswordConfirmFC()
       }, (formGroup: FormGroup) => {
           return PasswordValidator.isEqual(formGroup);
       })
@@ -43,18 +24,71 @@ export class FormService {
 
   static loginForm() {
       return new FormGroup({
-          email: new FormControl(
-            '',
-            Validators.compose([
-              Validators.email,
-              Validators.required
-            ])
-          ),
+          email: this.getEmailFC(),
           password: new FormControl(
             '',
             Validators.required
           )
       });
+  }
+
+  static emailForm() {
+    return new FormGroup({
+      email: this.getEmailFC()
+    });
+  }
+
+  static usernameForm() {
+    return new FormGroup({
+      username: this.getUsernameFC()
+    });
+  }
+
+  static passwordForm() {
+    return new FormGroup({
+      old: this.getPasswordConfirmFC(),
+      password: new FormGroup({
+        set: this.getPasswordSetFC(),
+        confirm: this.getPasswordConfirmFC()
+      }, (formGroup: FormGroup) => {
+        return PasswordValidator.isEqual(formGroup);
+      })
+    });
+  }
+
+  private static getEmailFC() {
+    return new FormControl(
+      '',
+      Validators.compose([
+        Validators.email,
+        Validators.required
+      ])
+    );
+  }
+
+  private static getUsernameFC() {
+    return new FormControl(
+      '',
+      Validators.compose([
+        Validators.pattern('^[a-zA-Z0-9 ]*$'),
+        Validators.required
+      ])
+    );
+  }
+
+  private static getPasswordSetFC() {
+    return new FormControl('',
+      Validators.compose([
+        Validators.pattern('^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$'),
+        Validators.required
+      ])
+    );
+  }
+
+  private static getPasswordConfirmFC() {
+    return new FormControl('',
+      Validators.required
+    );
   }
 
   static validationMessages() {
