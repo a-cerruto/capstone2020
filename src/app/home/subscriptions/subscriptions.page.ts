@@ -11,7 +11,7 @@ export class SubscriptionsPage implements OnInit {
 
   private subscriptions: Array<string>;
 
-  private providers: Array<String> = [
+  private providers: Array<string> = [
     'Netflix',
     'ShowTime',
     'Prime Video',
@@ -23,10 +23,13 @@ export class SubscriptionsPage implements OnInit {
   private lastSelected: string;
 
    constructor(private user: UserService, private subscriptionDB: SubscriptionsService) { 
-    //this.subscriptions = 
     this.configureSubs();
   }
 
+  /**
+   * Configures subscriptions and providers lists by getting the subscriptions
+   * from the databse and removing them from the list of providers.
+   */
   configureSubs(): void {
     //get the list of subs from the backend database
     this.subscriptionDB.currentSubs(this.user.getId()).toPromise().then(data => {
@@ -54,6 +57,7 @@ export class SubscriptionsPage implements OnInit {
 
   addSub() {
     if(this.lastSelected) {
+      this.subscriptionDB.addSub(this.user.getId(), this.lastSelected).subscribe();
       let index = this.providers.indexOf(this.lastSelected);
       this.providers.splice(index, 1);
       this.subscriptions.push(this.lastSelected);

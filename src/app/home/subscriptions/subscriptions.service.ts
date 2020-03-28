@@ -22,6 +22,10 @@ export class SubscriptionsService {
   }
 
   currentSubs(id: number) {
-    return this.http.post<Array<String>>(this.serverAddress, {id: id});
+    return this.http.post(this.serverAddress, {id: id});
+  }
+
+  addSub(id: number, provider: string) {
+    return this.http.put(this.serverAddress + "/add", {id: id, provider: provider});
   }
 }
