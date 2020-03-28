@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../membership/authentication/user.service';
+import { SubscriptionsService } from './subscriptions.service';
 
 @Component({
   selector: 'app-subscriptions',
@@ -21,20 +22,23 @@ export class SubscriptionsPage implements OnInit {
 
   private lastSelected: string;
 
-  constructor(private user: UserService) { 
-    this.subscriptions = this.getCurrentSubs();
-    //Remove all providers that a user has a subscription to from providers list
-    for(let subscription of this.subscriptions) {
-      let index = this.providers.indexOf(subscription);
-      if(index) {
-        this.providers.splice(index, 1)
-      }
-    }
+   constructor(private user: UserService, private subscriptionDB: SubscriptionsService) { 
+    //this.subscriptions = 
+    this.configureSubs();
   }
 
-  getCurrentSubs(): Array<string> {
+  configureSubs(): void {
     //get the list of subs from the backend database
-    return ['Hulu', 'HBO'];
+    this.subscriptionDB.currentSubs(this.user.getId()).toPromise().then(data => {
+      this.subscriptions = data['subscriptions'];
+      //Remove all providers that a user has a subscription to from providers list
+      for(let subscription of this.subscriptions) {
+        let index = this.providers.indexOf(subscription);
+        if(index) {
+          this.providers.splice(index, 1)
+        }
+      }
+    });
   }
 
   removeSub(subscription): void {
