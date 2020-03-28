@@ -8,5 +8,24 @@
 </ion-header>
 
 <ion-content>
+  <p class="welcome">Welcome {{user.getUsername()}}!</p>
+  <ion-grid>
+    <ion-row>
+        <ion-col>
+          <ion-card>
+            <ion-card-header>Featured</ion-card-header>
+          </ion-card>
+          <ion-card>
+            <ion-card-header>Action</ion-card-header>
+          </ion-card>
+          <ion-card>
+            <ion-card-header>Comedy</ion-card-header>
+          </ion-card>
+          <ion-card>
+            <ion-card-header>Horror</ion-card-header>
+          </ion-card>
+        </ion-col>
+    </ion-row>
+  </ion-grid>
 
 </ion-content>

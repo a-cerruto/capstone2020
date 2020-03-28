@@ -8,5 +8,32 @@
 </ion-header>
 
 <ion-content>
-
+  <p class="welcome">Welcome {{user.getUsername()}}!</p>
+  
+  <ion-grid>
+    <ion-row>
+        <ion-col>
+          <header>Continue Watching</header>
+          <ion-card>
+            <ion-img>{{videoThumbNail}}</ion-img>
+          </ion-card>
+          <header>Recommended</header>
+          <ion-card>
+            <ion-img>{{videoThumbNail}}</ion-img>
+          </ion-card>
+          <header>Action</header>
+          <ion-card>
+            <ion-img>{{videoThumbNail}}</ion-img>
+          </ion-card>
+          <header>Comedy</header>
+          <ion-card>
+            <ion-img>{{videoThumbNail}}</ion-img>
+          </ion-card>
+          <header>Horror</header>
+          <ion-card>
+            <ion-img>{{videoThumbNail}}</ion-img>
+          </ion-card>
+        </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
