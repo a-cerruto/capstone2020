@@ -37,8 +37,8 @@ export class SubscriptionsPage implements OnInit {
       //Remove all providers that a user has a subscription to from providers list
       for(let subscription of this.subscriptions) {
         let index = this.providers.indexOf(subscription);
-        if(index) {
-          this.providers.splice(index, 1)
+        if(index >= 0) {
+          this.providers.splice(index, 1);
         }
       }
     });
