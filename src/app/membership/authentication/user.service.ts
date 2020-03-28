@@ -11,7 +11,7 @@ export class UserService {
 
   private loggedIn = false;
 
-  private id: string;
+  private id: number;
   private email: string;
   private username: string;
 
@@ -48,7 +48,7 @@ export class UserService {
   getDetails() {
     let user;
     this.storage.ready().then(async () => {
-      user = await this.storage.get('USER');
+      while (!user) { user = await this.storage.get('USER'); }
       this.id = user.id;
       this.email = user.email;
       this.username = user.username;
@@ -57,6 +57,10 @@ export class UserService {
       console.log('email: ' + this.email);
       console.log('username: ' + this.username);
     });
+  }
+
+  getId() {
+    return this.id;
   }
 
   getEmail() {
