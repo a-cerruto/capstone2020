@@ -8,5 +8,10 @@
 </ion-header>
 
 <ion-content>
-
+  <ion-list>
+    <ion-item [routerDirection]="'root'" [routerLink]="'/settings/browse'" detail>
+      <ion-icon slot="start" name="search"></ion-icon>
+      <ion-label>Browsing Settings</ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>
