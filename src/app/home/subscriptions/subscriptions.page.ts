@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../membership/authentication/user.service';
+import { SubscriptionsService } from './subscriptions.service';
 
 @Component({
   selector: 'app-subscriptions',
@@ -10,7 +11,7 @@ export class SubscriptionsPage implements OnInit {
 
   private subscriptions: Array<string>;
 
-  private providers: Array<String> = [
+  private providers: Array<string> = [
     'Netflix',
     'ShowTime',
     'Prime Video',
@@ -20,29 +21,34 @@ export class SubscriptionsPage implements OnInit {
   ];
 
   private lastSelected: string;
-  private selectValue: string;
 
-  constructor(private user: UserService) { 
-    this.subscriptions = this.getCurrentSubs();
-    //Remove all providers that a user has a subscription to from providers list
-    for(let subscription of this.subscriptions) {
-      let index = this.providers.indexOf(subscription);
-      if(index) {
-        this.providers.splice(index, 1)
-      }
-    }
+  constructor(private user: UserService, private subscriptionDB: SubscriptionsService) { 
+    this.configureSubs();
   }
 
-  getCurrentSubs(): Array<string> {
+  /**
+   * Configures subscriptions and providers lists by getting the subscriptions
+   * from the databse and removing them from the list of providers.
+   */
+  configureSubs(): void {
     //get the list of subs from the backend database
-    return ['Hulu', 'HBO'];
+    this.subscriptionDB.currentSubs(this.user.getId()).toPromise().then(data => {
+      this.subscriptions = data['subscriptions'];
+      //Remove all providers that a user has a subscription to from providers list
+      for(let subscription of this.subscriptions) {
+        let index = this.providers.indexOf(subscription);
+        if(index >= 0) {
+          this.providers.splice(index, 1);
+        }
+      }
+    });
   }
 
   removeSub(subscription): void {
     let index = this.subscriptions.indexOf(subscription);
     this.subscriptions.splice(index, 1);
     this.providers.push(subscription);
-    //Remove from the database
+    this.subscriptionDB.removeSub(this.user.getId(), subscription).subscribe();
   }
 
   findLastSelected($event) {
@@ -51,11 +57,10 @@ export class SubscriptionsPage implements OnInit {
 
   addSub() {
     if(this.lastSelected) {
+      this.subscriptionDB.addSub(this.user.getId(), this.lastSelected).subscribe();
       let index = this.providers.indexOf(this.lastSelected);
       this.providers.splice(index, 1);
       this.subscriptions.push(this.lastSelected);
-      //Add this value to the database of providers user is subscribed to
-
       this.lastSelected = "";
     }
   }
