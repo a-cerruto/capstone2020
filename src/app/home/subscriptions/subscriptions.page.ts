@@ -22,7 +22,7 @@ export class SubscriptionsPage implements OnInit {
 
   private lastSelected: string;
 
-   constructor(private user: UserService, private subscriptionDB: SubscriptionsService) { 
+  constructor(private user: UserService, private subscriptionDB: SubscriptionsService) { 
     this.configureSubs();
   }
 
@@ -48,7 +48,7 @@ export class SubscriptionsPage implements OnInit {
     let index = this.subscriptions.indexOf(subscription);
     this.subscriptions.splice(index, 1);
     this.providers.push(subscription);
-    //Remove from the database
+    this.subscriptionDB.removeSub(this.user.getId(), subscription).subscribe();
   }
 
   findLastSelected($event) {
@@ -61,8 +61,6 @@ export class SubscriptionsPage implements OnInit {
       let index = this.providers.indexOf(this.lastSelected);
       this.providers.splice(index, 1);
       this.subscriptions.push(this.lastSelected);
-      //Add this value to the database of providers user is subscribed to
-
       this.lastSelected = "";
     }
   }

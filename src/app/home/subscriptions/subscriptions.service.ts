@@ -26,6 +26,10 @@ export class SubscriptionsService {
   }
 
   addSub(id: number, provider: string) {
-    return this.http.put(this.serverAddress + "/add", {id: id, provider: provider});
+    return this.http.put(this.serverAddress, {id: id, provider: provider});
+  }
+
+  removeSub(id: number, provider: string) {
+    return this.http.delete(this.serverAddress + "/" + id + "/" + provider);
   }
 }
