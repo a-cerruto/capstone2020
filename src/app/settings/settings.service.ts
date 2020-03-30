@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 import { Storage } from '@ionic/storage';
 
-import { UserService } from '../membership/authentication/user.service';
-import {User} from '../membership/authentication/user';
+import { SettingsBrowse } from './interfaces/settings-browse';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +17,11 @@ export class SettingsService {
   private readonly serverHostName: string;
   private readonly serverAddress: string;
 
+  private readonly browserSettingsKey: string;
+
   constructor(
     private http: HttpClient,
-    private storage: Storage,
-    private user: UserService
+    private storage: Storage
   ) {
     this.serverProtocol = 'http://';
     this.serverHostName = window.location.hostname;
@@ -31,5 +31,19 @@ export class SettingsService {
       this.serverProtocol +
       this.serverHostName +
       this.serverPort;
+
+    this.browserSettingsKey = 'BROWSER_SETTINGS';
+  }
+
+  getDefaultBrowserSettings(id: number): Observable<SettingsBrowse> {
+    return this.http.post<SettingsBrowse>(this.serverAddress + '/browse', { user_id: id }).pipe(
+      tap(async (res: SettingsBrowse) => {
+        if (res) {
+          this.storage.ready().then(async () => {
+            await this.storage.set(this.browserSettingsKey, res);
+          });
+        }
+      })
+    );
   }
 }

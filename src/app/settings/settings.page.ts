@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { UserService } from '../membership/authentication/user.service';
 
 @Component({
   selector: 'app-settings',
