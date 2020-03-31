@@ -12,16 +12,25 @@ import { ServerService } from '../server.service';
 })
 export class DetailsPage implements OnInit {
 
-  private id;
-  private details;
+  private id: any;
+  private details: any;
+  private loaded: boolean;
+  private slideOptions: any;
 
-  private detailsKey = 'DETAILS';
+  private readonly detailsKey = 'DETAILS';
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private storage: Storage,
     private server: ServerService
-  ) { }
+  ) {
+    this.loaded = false;
+    this.slideOptions = {
+      spaceBetween: 0,
+      slidesPerView: 2,
+      centeredSlideBounds: true
+    };
+  }
 
   ngOnInit() {
     this.id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -32,6 +41,7 @@ export class DetailsPage implements OnInit {
         this.storage.ready().then(async () => {
           while (!details) { details = await this.storage.get(this.detailsKey); }
           this.details = details;
+          this.loaded = true;
           console.log(this.details);
         });
       },

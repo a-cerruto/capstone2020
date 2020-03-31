@@ -8,18 +8,19 @@
 </ion-header>
 
 <ion-content>
-  <p class="welcome">Welcome {{user.getUsername()}}!</p>
+  <ion-searchbar></ion-searchbar>
   <ion-list>
     <ion-item>
       <ion-label>
-        Featured
+        Featured Shows
       </ion-label>
     </ion-item>
     <ion-item>
       <ion-slides [options]="slideOptions">
         <ion-slide *ngFor="let result of featuredResults">
-          <ion-card (click)="getShowDetails(result.id)">
-            <img src="{{ result.artwork_208x117}}"/>
+          <ion-card [routerDirection]="'forward'" [routerLink]="'/home/browse/details/' + result.id">
+            <img src="{{ result.artwork_304x171 }}"/>
+            <ion-card-subtitle>{{ result.title }}</ion-card-subtitle>
           </ion-card>
         </ion-slide>
       </ion-slides>

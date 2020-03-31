@@ -77,8 +77,4 @@ export class BrowsePage implements OnInit {
     });
   }
 
-  getShowDetails(id) {
-    this.router.navigateByUrl('/home/browse/details/' + id).then();
-  }
-
 }
