@@ -14,12 +14,15 @@ import { SettingsBrowse } from '../../settings/interfaces/settings-browse';
 export class BrowsePage implements OnInit {
 
   private userBrowseSettings: SettingsBrowse;
+  private sectionNames: string[];
 
   constructor(
     private user: UserService,
     private loading: LoadingService,
     private toast: ToastService
-  ) { }
+  ) {
+    this.sectionNames = ['Featured', 'Action', 'Horror', 'Comedy', 'Shows', 'Movies'];
+  }
 
   ngOnInit() {
   }
