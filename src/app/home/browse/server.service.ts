@@ -19,6 +19,7 @@ export class ServerService {
   private readonly featuredResultsKey = 'FEATURED_RESULTS';
   private readonly detailsKey = 'DETAILS';
   private readonly episodesKey = 'EPISODES';
+  private readonly episodeKey = 'EPISODE';
 
   constructor(
     private http: HttpClient,
@@ -47,8 +48,8 @@ export class ServerService {
     );
   }
 
-  getShowDetails(id: number): Observable<any> {
-    return this.http.post(this.serverAddress + '/show/details', { id }).pipe(
+  getShowDetails(showId: number): Observable<any> {
+    return this.http.post(this.serverAddress + '/show/details', { showId }).pipe(
       tap(async (res: any) => {
         console.log(res);
         if (res) {
@@ -67,6 +68,19 @@ export class ServerService {
         if (res) {
           this.storage.ready().then(async () => {
             await this.storage.set(this.episodesKey, res.results);
+          });
+        }
+      })
+    );
+  }
+
+  getEpisodeDetails(episodeId: number): Observable<any> {
+    return this.http.post(this.serverAddress + '/episode/details', { episodeId }).pipe(
+      tap(async (res: any) => {
+        console.log(res);
+        if (res) {
+          this.storage.ready().then(async () => {
+            await this.storage.set(this.episodeKey, res);
           });
         }
       })

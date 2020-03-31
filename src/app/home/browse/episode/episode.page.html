@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title *ngIf="loaded">{{ details.title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="loaded">
+    <ion-card>
+      <ion-img src="{{ details.artwork_448x252 }}"></ion-img>
+      <ion-card-header>
+
+      </ion-card-header>
+    </ion-card>
+  </div>
+
+</ion-content>

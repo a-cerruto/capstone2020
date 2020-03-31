@@ -49,7 +49,6 @@ export class DetailsPage implements OnInit {
     this.server.getShowDetails(this.id).subscribe({
       next: async res => {
         let details;
-        await this.storage.remove(this.detailsKey);
         this.storage.ready().then(async () => {
           while (!details) { details = await this.storage.get(this.detailsKey); }
           this.details = details;
@@ -72,7 +71,11 @@ export class DetailsPage implements OnInit {
           this.episodes = episodes;
           this.loaded = true;
         });
+      },
+      error: err => {
+        console.log(err.status);
       }
+
     });
   }
 
