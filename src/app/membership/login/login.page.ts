@@ -39,7 +39,6 @@ export class LoginPage implements OnInit {
 
   ionViewWillLeave() {
     this.toastService.dismiss().then();
-    this.loadingService.dismiss().then();
   }
 
   async login(form) {
@@ -50,7 +49,9 @@ export class LoginPage implements OnInit {
     this.user.login(form).subscribe({
       next: res => {
         console.log(res);
-        this.router.navigateByUrl('');
+        this.router.navigateByUrl('').then(() => {
+          this.loadingService.dismiss();
+        });
       },
       error: err => {
         console.log(err.status);

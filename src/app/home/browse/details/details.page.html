@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title *ngIf="loaded">{{ details.title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="loaded">
+    <ion-card>
+      <img src="{{ details.artwork_448x252 }}"/>
+      <ion-card-header>
+        <ion-card-title *ngIf="details.rating != 'Not Rated'">{{ details.rating }}</ion-card-title>
+        <ion-card-subtitle *ngIf="details.network">{{ details.network }}</ion-card-subtitle>
+        <ion-card-subtitle *ngIf="
+                            details.air_day_of_week &&
+                            details.air_time &&
+                            details.status == 'Continuing'">
+          {{ details.air_day_of_week }}'s @ {{ details.air_time }}
+        </ion-card-subtitle>
+      </ion-card-header>
+    </ion-card>
+    <ion-card *ngIf="details.overview">
+      <ion-card-header>
+        <ion-card-title>Overview</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>{{ details.overview }}</ion-card-content>
+    </ion-card>
+    <ion-card *ngIf="details.cast.length > 0">
+      <ion-card-header>
+        <ion-card-title>Cast</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-slides [options]="slideOptions">
+          <ion-slide *ngFor="let member of details.cast">
+            <ion-card>
+              <img src="{{ member.image }}"/>
+              <ion-card-header>
+                <ion-card-title>{{ member.name }}</ion-card-title>
+              </ion-card-header>
+              <ion-card-subtitle>{{ member.character_name }}</ion-card-subtitle>
+            </ion-card>
+          </ion-slide>
+        </ion-slides>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
