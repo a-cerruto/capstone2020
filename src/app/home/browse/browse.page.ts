@@ -18,11 +18,11 @@ import { SettingsBrowse } from '../../settings/interfaces/settings-browse';
 export class BrowsePage implements OnInit {
 
   private userBrowseSettings: SettingsBrowse;
-  private sectionNames: string[];
   private featuredResults: any;
+  private loaded: boolean;
   private slideOptions: any;
 
-  private readonly featuredResultsKey: string;
+  private readonly featuredResultsKey = 'FEATURED_RESULTS';
 
   constructor(
     private router: Router,
@@ -32,13 +32,12 @@ export class BrowsePage implements OnInit {
     private toast: ToastService,
     private server: ServerService
   ) {
-    this.sectionNames = ['Featured', 'Action', 'Horror', 'Comedy', 'Shows', 'Movies'];
+    this.loaded = false;
     this.slideOptions = {
       spaceBetween: 0,
       slidesPerView: 2,
       centeredSlideBounds: true
     };
-    this.featuredResultsKey = 'FEATURED_RESULTS';
   }
 
   ngOnInit() {
@@ -48,7 +47,6 @@ export class BrowsePage implements OnInit {
           if (settingsStored) {
             this.userBrowseSettings = this.user.getBrowserSettings();
             this.loading.dismiss().then(() => {
-              console.log(this.userBrowseSettings);
               this.populateFeatured();
             });
           }
@@ -63,11 +61,10 @@ export class BrowsePage implements OnInit {
     this.server.getFeatured(this.userBrowseSettings).subscribe({
       next: async res => {
         let results;
-        await this.storage.remove(this.featuredResultsKey);
         this.storage.ready().then(async () => {
           while (!results) { results = await this.storage.get(this.featuredResultsKey); }
           this.featuredResults = results;
-          console.log(this.featuredResults);
+          this.loaded = true;
         });
       },
       error: err => {

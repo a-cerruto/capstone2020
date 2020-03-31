@@ -10,7 +10,7 @@ export class SubscriptionsService {
   private readonly serverHostName: string;
   private readonly serverAddress: string;
 
-  constructor(private http: HttpClient) { 
+  constructor(private http: HttpClient) {
     this.serverProtocol = 'http://';
     this.serverHostName = window.location.hostname;
     this.serverPort = ':3000/subscriptions';
@@ -22,14 +22,14 @@ export class SubscriptionsService {
   }
 
   currentSubs(id: number) {
-    return this.http.post(this.serverAddress, {id: id});
+    return this.http.post(this.serverAddress, {id});
   }
 
   addSub(id: number, provider: string) {
-    return this.http.put(this.serverAddress, {id: id, provider: provider});
+    return this.http.put(this.serverAddress, {id, provider});
   }
 
   removeSub(id: number, provider: string) {
-    return this.http.delete(this.serverAddress + "/" + id + "/" + provider);
+    return this.http.delete(this.serverAddress + '/' + id + '/' + provider);
   }
 }

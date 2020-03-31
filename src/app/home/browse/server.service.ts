@@ -16,8 +16,9 @@ export class ServerService {
   private readonly serverHostName: string;
   private readonly serverAddress: string;
 
-  private readonly featuredResultsKey: string;
-  private readonly detailsKey: string;
+  private readonly featuredResultsKey = 'FEATURED_RESULTS';
+  private readonly detailsKey = 'DETAILS';
+  private readonly episodesKey = 'EPISODES';
 
   constructor(
     private http: HttpClient,
@@ -31,9 +32,6 @@ export class ServerService {
       this.serverProtocol +
       this.serverHostName +
       this.serverPort;
-
-    this.featuredResultsKey = 'FEATURED_RESULTS';
-    this.detailsKey = 'DETAILS';
   }
 
   getFeatured(settings: SettingsBrowse): Observable<any> {
@@ -50,12 +48,25 @@ export class ServerService {
   }
 
   getShowDetails(id: number): Observable<any> {
-    return this.http.post(this.serverAddress + '/show_details', { id }).pipe(
+    return this.http.post(this.serverAddress + '/show/details', { id }).pipe(
       tap(async (res: any) => {
         console.log(res);
         if (res) {
           this.storage.ready().then(async () => {
             await this.storage.set(this.detailsKey, res);
+          });
+        }
+      })
+    );
+  }
+
+  getEpisodes(showId: any, season: any, settings: SettingsBrowse): Observable<any> {
+    return this.http.post(this.serverAddress + '/show/episodes', { showId, season, settings }).pipe(
+      tap(async (res: any) => {
+        console.log(res);
+        if (res) {
+          this.storage.ready().then(async () => {
+            await this.storage.set(this.episodesKey, res.results);
           });
         }
       })

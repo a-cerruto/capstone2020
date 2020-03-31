@@ -11,17 +11,15 @@
   <ion-searchbar></ion-searchbar>
   <ion-list>
     <ion-item>
-      <ion-label>
-        Featured Shows
-      </ion-label>
+      <ion-label>Shows</ion-label>
     </ion-item>
+    <ion-list-header>Featured</ion-list-header>
     <ion-item>
       <ion-slides [options]="slideOptions">
         <ion-slide *ngFor="let result of featuredResults">
-          <ion-card [routerDirection]="'forward'" [routerLink]="'/home/browse/details/' + result.id">
-            <img src="{{ result.artwork_304x171 }}"/>
-            <ion-card-subtitle>{{ result.title }}</ion-card-subtitle>
-          </ion-card>
+          <ion-item button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/details/' + result.id">
+            <img style="border-radius: 4px;" src="{{ result.artwork_304x171 }}"/>
+          </ion-item>
         </ion-slide>
       </ion-slides>
     </ion-item>
