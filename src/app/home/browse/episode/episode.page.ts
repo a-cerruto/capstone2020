@@ -16,7 +16,7 @@ export class EpisodePage implements OnInit {
   private showName: string;
   private episodeId: any;
   private details: any;
-  private defaultSourceKey: string;
+  private linkKey: string;
   private episodeLink: string;
   private loaded: boolean;
 
@@ -54,13 +54,13 @@ export class EpisodePage implements OnInit {
 
   async setDefaultSource() {
     if (this.details.free_web_sources.length > 0) {
-      this.defaultSourceKey = 'free';
+      this.linkKey = 'free';
       this.episodeLink = this.details.free_web_sources[0].link;
     } else if (this.details.subscription_web_sources.length > 0) {
-      this.defaultSourceKey = 'subscription';
+      this.linkKey = 'subscription';
       this.episodeLink = this.details.subscription_web_sources[0].link;
     } else if (this.details.purchase_web_sources.length > 0) {
-      this.defaultSourceKey = 'purchase';
+      this.linkKey = 'purchase';
       this.episodeLink = this.details.purchase_web_sources[0].link;
     } else {
       this.episodeLink = '';
@@ -69,15 +69,9 @@ export class EpisodePage implements OnInit {
 
   selectSource(event) {
     switch (event) {
-      case 'free':
-        this.episodeLink = this.details.free_web_sources[0].link;
-        break;
-      case 'subscription':
-        this.episodeLink = this.details.subscription_web_sources[0].link;
-        break;
-      case 'purchase':
-        this.episodeLink = this.details.purchase_web_sources[0].link;
-        break;
+      case 'free': this.episodeLink = this.details.free_web_sources[0].link; break;
+      case 'subscription': this.episodeLink = this.details.subscription_web_sources[0].link; break;
+      case 'purchase': this.episodeLink = this.details.purchase_web_sources[0].link; break;
     }
   }
 }

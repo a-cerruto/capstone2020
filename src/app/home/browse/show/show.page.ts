@@ -7,11 +7,11 @@ import { ServerService } from '../server.service';
 import { UserService } from '../../../membership/authentication/user.service';
 
 @Component({
-  selector: 'app-details',
-  templateUrl: './details.page.html',
-  styleUrls: ['./details.page.scss'],
+  selector: 'app-show',
+  templateUrl: './show.page.html',
+  styleUrls: ['./show.page.scss'],
 })
-export class DetailsPage implements OnInit {
+export class ShowPage implements OnInit {
 
   private showId: any;
   private details: any;
@@ -79,6 +79,4 @@ export class DetailsPage implements OnInit {
 
     });
   }
-
-
 }

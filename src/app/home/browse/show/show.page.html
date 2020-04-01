@@ -12,7 +12,7 @@
     <ion-card>
       <ion-img src="{{ details.artwork_448x252 }}"></ion-img>
       <ion-card-header>
-        <ion-card-title *ngIf="details.rating != 'Not Rated'">{{ details.rating }}</ion-card-title>
+        <ion-card-title *ngIf="details.rating">{{ details.rating }}</ion-card-title>
         <ion-card-subtitle *ngIf="details.network">{{ details.network }}</ion-card-subtitle>
         <ion-card-subtitle *ngIf="
                             details.air_day_of_week &&
@@ -38,7 +38,7 @@
       <ion-card-content>
         <ion-slides [options]="episodeSlideOptions">
           <ion-slide *ngFor="let episode of episodes">
-            <ion-card button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/' + details.title + '/' + episode.id">
+            <ion-card button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/episode/' + details.title + '/' + episode.id">
               <img src="{{ episode.thumbnail_304x171 }}"/>
               <ion-card-header>
                 <ion-card-subtitle>Episode #{{ episode.episode_number }}</ion-card-subtitle>

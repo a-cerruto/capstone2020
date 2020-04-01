@@ -1,5 +1,8 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
     <ion-buttons slot="end">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -9,7 +12,7 @@
 
 <ion-content>
   <ion-list>
-    <ion-item [routerDirection]="'root'" [routerLink]="'/settings/browse'" detail>
+    <ion-item [routerDirection]="'forward'" [routerLink]="'/settings/browse'" detail>
       <ion-icon slot="start" name="search"></ion-icon>
       <ion-label>Browsing Settings</ion-label>
     </ion-item>
