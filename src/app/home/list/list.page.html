@@ -8,32 +8,38 @@
 </ion-header>
 
 <ion-content>
-  <p class="welcome">Welcome {{user.getUsername()}}!</p>
-  
-  <ion-grid>
-    <ion-row>
-        <ion-col>
-          <header>Continue Watching</header>
+ 
+  <ion-searchbar></ion-searchbar>
+  <ion-list>
+    <ion-item>
+      <ion-label>
+        Continue Watching
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-slides [options]="slideOptions">
+        <ion-slide *ngFor="let result of continueResults">
           <ion-card>
-            <ion-img>{{videoThumbNail}}</ion-img>
+            <img src="{{ result.artwork_304x171 }}"/>
+            <ion-card-subtitle>{{ result.title }}</ion-card-subtitle>
           </ion-card>
-          <header>Recommended</header>
+        </ion-slide>
+      </ion-slides>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        Saved
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-slides [options]="slideOptions">
+        <ion-slide *ngFor="let result of savedResults">
           <ion-card>
-            <ion-img>{{videoThumbNail}}</ion-img>
+            <img src="{{ result.artwork_304x171 }}"/>
+            <ion-card-subtitle>{{ result.title }}</ion-card-subtitle>
           </ion-card>
-          <header>Action</header>
-          <ion-card>
-            <ion-img>{{videoThumbNail}}</ion-img>
-          </ion-card>
-          <header>Comedy</header>
-          <ion-card>
-            <ion-img>{{videoThumbNail}}</ion-img>
-          </ion-card>
-          <header>Horror</header>
-          <ion-card>
-            <ion-img>{{videoThumbNail}}</ion-img>
-          </ion-card>
-        </ion-col>
-    </ion-row>
-  </ion-grid>
+        </ion-slide>
+      </ion-slides>
+    </ion-item>
+  </ion-list>
 </ion-content>

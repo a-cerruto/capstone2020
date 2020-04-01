@@ -10,7 +10,6 @@
 <ion-content>
 
   <!-- List of current subscriptions -->
-  <p class="welcome">Welcome {{user.getUsername()}}!</p>
   <ion-grid>
     <ion-row>
       <ion-col><header>Current Subscriptions</header></ion-col>
@@ -44,6 +43,20 @@
         <ion-button expand="block" (click)="addSub()">Add</ion-button>
       </ion-col>
     </ion-row>
+    <br>
+    <ion-row>
+      <ion-col><header>Recommendations</header></ion-col>
+      <p class="text">Based off your watch history, scores have been assigned to your current subscriptions. You must be subscribed for at least one month to receive scores for a provider.</p>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item *ngFor="let subscription of subscriptions">
+            <ion-label>{{subscription}}</ion-label>
+            <ion-note slot="end" color="primary">99</ion-note>
+          </ion-item>
+        </ion-list>
+      </ion-col>      
+    </ion-row>
   </ion-grid>
-
 </ion-content>
