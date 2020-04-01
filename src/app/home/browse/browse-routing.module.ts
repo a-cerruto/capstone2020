@@ -9,8 +9,16 @@ const routes: Routes = [
     component: BrowsePage
   },
   {
-    path: 'details/:id',
-    loadChildren: () => import('./details/details.module').then( m => m.DetailsPageModule)
+    path: 'show/:showId',
+    loadChildren: () => import('./show/show.module').then( m => m.ShowPageModule)
+  },
+  {
+    path: 'episode/:showName/:episodeId',
+    loadChildren: () => import('./episode/episode.module').then( m => m.EpisodePageModule)
+  },
+  {
+    path: 'movie/:movieId',
+    loadChildren: () => import('./movie/movie.module').then( m => m.MoviePageModule)
   }
 ];
 

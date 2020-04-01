@@ -1,0 +1,99 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title *ngIf="loaded">{{ showName }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="loaded">
+    <ion-card>
+      <ion-img src="{{ details.thumbnail_400x225 }}"></ion-img>
+      <ion-card-header>
+        <ion-card-title>{{ details.title }}</ion-card-title>
+        <ion-card-subtitle>Season {{ details.season_number }} Episode {{ details.episode_number }}</ion-card-subtitle>
+      </ion-card-header>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-segment (ionChange)="selectSource($event.detail.value)" value="{{ linkKey }}">
+          <ion-segment-button *ngIf="details.free_web_sources.length > 0" value="free">
+            <ion-label>Free</ion-label>
+          </ion-segment-button>
+          <ion-segment-button *ngIf="details.subscription_web_sources.length > 0" value="subscription">
+            <ion-label>Subscription</ion-label>
+          </ion-segment-button>
+          <ion-segment-button *ngIf="details.purchase_web_sources.length > 0" value="purchase">
+            <ion-label>Purchase</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button size="small" expand="block" target="_blank" href="{{ episodeLink }}">
+          <ion-label>Watch this episode</ion-label>
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="details.overview">
+      <ion-card-header>
+        <ion-card-title>Overview</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>{{ details.overview }}</ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Cast & Crew</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+
+        <ion-list *ngIf="details.writers.length > 0">
+          <ion-list-header>
+            <ion-label>Written by:</ion-label>
+          </ion-list-header>
+          <ion-item *ngFor="let writer of details.writers">
+            <ion-label class="ion-text-center">{{ writer.name }}</ion-label>
+          </ion-item>
+        </ion-list>
+
+        <ion-list *ngIf="details.directors.length > 0">
+          <ion-list-header>
+            <ion-label>Directed by:</ion-label>
+          </ion-list-header>
+          <ion-item *ngFor="let director of details.directors">
+            <ion-label class="ion-text-center">{{ director.name }}</ion-label>
+          </ion-item>
+        </ion-list>
+
+        <ion-list *ngIf="details.cast.length > 0">
+          <ion-list-header>
+            <ion-label>Cast Members:</ion-label>
+          </ion-list-header>
+          <ion-item *ngFor="let member of details.cast">
+            <ion-label class="ion-text-center">
+              <h2>{{ member.name }}</h2>
+              <h3>{{ member.character_name }}</h3>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+
+        <ion-list *ngIf="details.guest_stars.length > 0">
+          <ion-list-header>
+            <ion-label>Guest Appearances:</ion-label>
+          </ion-list-header>
+          <ion-item *ngFor="let guest of details.guest_stars">
+            <ion-label class="ion-text-center">
+              <h2>{{ guest.name }}</h2>
+              <h3>{{ guest.character_name }}</h3>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+</ion-content>

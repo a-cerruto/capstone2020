@@ -18,11 +18,19 @@ import { SettingsBrowse } from '../../settings/interfaces/settings-browse';
 export class BrowsePage implements OnInit {
 
   private userBrowseSettings: SettingsBrowse;
-  private sectionNames: string[];
   private featuredResults: any;
+  private actionResults: any;
+  private comedyResults: any;
+  private horrorResults: any;
+  private movieResults: any;
+  private loaded: boolean;
   private slideOptions: any;
 
-  private readonly featuredResultsKey: string;
+  private readonly featuredResultsKey = 'FEATURED_RESULTS';
+  private readonly actionResultsKey = 'ACTION_RESULTS';
+  private readonly comedyResultsKey = 'COMEDY_RESULTS';
+  private readonly horrorResultsKey = 'HORROR_RESULTS';
+  private readonly movieResultsKey = 'MOVIE_RESULTS';
 
   constructor(
     private router: Router,
@@ -32,42 +40,57 @@ export class BrowsePage implements OnInit {
     private toast: ToastService,
     private server: ServerService
   ) {
-    this.sectionNames = ['Featured', 'Action', 'Horror', 'Comedy', 'Shows', 'Movies'];
+    this.loaded = false;
     this.slideOptions = {
       spaceBetween: 0,
-      slidesPerView: 2,
-      centeredSlideBounds: true
+      slidesPerView: 2
     };
-    this.featuredResultsKey = 'FEATURED_RESULTS';
   }
 
   ngOnInit() {
     if (!this.userBrowseSettings) {
-      this.loading.getLoading('Getting personalized settings for ' + this.user.getUsername()).then(() => {
+      this.loading.getLoading('Getting new content. One moment please.').then(() => {
         this.user.areSettingsStored().subscribe(async settingsStored => {
           if (settingsStored) {
             this.userBrowseSettings = this.user.getBrowserSettings();
-            this.loading.dismiss().then(() => {
-              console.log(this.userBrowseSettings);
-              this.populateFeatured();
+            this.getListings().then(() => {
+              this.loading.dismiss();
             });
           }
         });
       });
     } else {
-      this.populateFeatured().then();
+      this.getListings().then();
     }
   }
 
-  async populateFeatured() {
-    this.server.getFeatured(this.userBrowseSettings).subscribe({
+  async getListings() {
+    await this.getShowsList(this.featuredResultsKey, '', (results) => {
+      this.featuredResults = results;
+    });
+    await this.getShowsList(this.actionResultsKey, 'action', (results) => {
+      this.actionResults = results;
+    });
+    await this.getShowsList(this.comedyResultsKey, 'comedy', (results) => {
+      this.comedyResults = results;
+    });
+    await this.getShowsList(this.horrorResultsKey, 'horror', (results) => {
+      this.horrorResults = results;
+    });
+    await this.getMovieList(this.movieResultsKey, (results) => {
+      this.movieResults = results;
+      this.loaded = true;
+    });
+  }
+
+  async getShowsList(key, tags, callback) {
+    this.server.getShows(this.userBrowseSettings, tags, key).subscribe({
       next: async res => {
         let results;
-        await this.storage.remove(this.featuredResultsKey);
+        await this.storage.remove(key);
         this.storage.ready().then(async () => {
-          while (!results) { results = await this.storage.get(this.featuredResultsKey); }
-          this.featuredResults = results;
-          console.log(this.featuredResults);
+          while (!results) { results = await this.storage.get(key); }
+          callback(results);
         });
       },
       error: err => {
@@ -77,4 +100,20 @@ export class BrowsePage implements OnInit {
     });
   }
 
+  async getMovieList(key, callback) {
+    this.server.getMovies(this.userBrowseSettings, key).subscribe({
+      next: async res => {
+        let results;
+        await this.storage.remove(key);
+        this.storage.ready().then(async () => {
+          while (!results) { results = await this.storage.get(key); }
+          callback(results);
+        });
+      },
+      error: err => {
+        console.log(err.status);
+        this.toast.showError(err.status);
+      }
+    });
+  }
 }

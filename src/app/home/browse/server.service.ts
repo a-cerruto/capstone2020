@@ -16,8 +16,9 @@ export class ServerService {
   private readonly serverHostName: string;
   private readonly serverAddress: string;
 
-  private readonly featuredResultsKey: string;
-  private readonly detailsKey: string;
+  private readonly detailsKey = 'DETAILS';
+  private readonly episodesKey = 'EPISODES';
+  private readonly episodeKey = 'EPISODE';
 
   constructor(
     private http: HttpClient,
@@ -25,37 +26,87 @@ export class ServerService {
   ) {
     this.serverProtocol = 'http://';
     this.serverHostName = window.location.hostname;
-    this.serverPort = ':3000/browse';
+    this.serverPort = ':3000/';
 
     this.serverAddress =
       this.serverProtocol +
       this.serverHostName +
       this.serverPort;
-
-    this.featuredResultsKey = 'FEATURED_RESULTS';
-    this.detailsKey = 'DETAILS';
   }
 
-  getFeatured(settings: SettingsBrowse): Observable<any> {
-    return this.http.post(this.serverAddress + '/featured', settings).pipe(
+  getShows(settings: SettingsBrowse, tags: string, storageKey): Observable<any> {
+    return this.http.post(this.serverAddress + 'shows', { settings, tags }).pipe(
       tap(async (res: any) => {
         console.log(res);
         if (res) {
           this.storage.ready().then(async () => {
-            await this.storage.set(this.featuredResultsKey, res);
+            await this.storage.set(storageKey, res);
           });
         }
       })
     );
   }
 
-  getShowDetails(id: number): Observable<any> {
-    return this.http.post(this.serverAddress + '/show_details', { id }).pipe(
+  getShowDetails(showId: number): Observable<any> {
+    return this.http.post(this.serverAddress + 'shows/details', { showId }).pipe(
       tap(async (res: any) => {
         console.log(res);
         if (res) {
           this.storage.ready().then(async () => {
             await this.storage.set(this.detailsKey, res);
+          });
+        }
+      })
+    );
+  }
+
+  getEpisodes(showId: any, season: any, settings: SettingsBrowse): Observable<any> {
+    return this.http.post(this.serverAddress + 'episodes', { showId, season, settings }).pipe(
+      tap(async (res: any) => {
+        console.log(res);
+        if (res) {
+          this.storage.ready().then(async () => {
+            await this.storage.set(this.episodesKey, res.results);
+          });
+        }
+      })
+    );
+  }
+
+  getEpisodeDetails(episodeId: number): Observable<any> {
+    return this.http.post(this.serverAddress + 'episodes/details', { episodeId }).pipe(
+      tap(async (res: any) => {
+        console.log(res);
+        if (res) {
+          this.storage.ready().then(async () => {
+            await this.storage.set(this.episodeKey, res);
+          });
+        }
+      })
+    );
+  }
+
+  getMovies(settings: SettingsBrowse, storageKey): Observable<any> {
+    return this.http.post(this.serverAddress + 'movies', { settings }).pipe(
+      tap(async (res: any) => {
+        console.log(res.results);
+        if (res.results) {
+          this.storage.ready().then(async () => {
+            await this.storage.set(storageKey, res.results);
+          });
+        }
+      })
+    );
+  }
+
+  getMovieDetails(movieId: number, storageKey): Observable<any> {
+    console.log('getMovieDetails()');
+    return this.http.post(this.serverAddress + 'movies/details', { movieId }).pipe(
+      tap(async (res: any) => {
+        console.log(res);
+        if (res) {
+          this.storage.ready().then(async () => {
+            await this.storage.set(storageKey, res);
           });
         }
       })

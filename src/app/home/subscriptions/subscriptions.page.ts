@@ -22,7 +22,7 @@ export class SubscriptionsPage implements OnInit {
 
   private lastSelected: string;
 
-  constructor(private user: UserService, private subscriptionDB: SubscriptionsService) { 
+  constructor(private user: UserService, private subscriptionDB: SubscriptionsService) {
     this.configureSubs();
   }
 
@@ -31,13 +31,13 @@ export class SubscriptionsPage implements OnInit {
    * from the databse and removing them from the list of providers.
    */
   configureSubs(): void {
-    //get the list of subs from the backend database
+    // get the list of subs from the backend database
     this.subscriptionDB.currentSubs(this.user.getId()).toPromise().then(data => {
       this.subscriptions = data['subscriptions'];
-      //Remove all providers that a user has a subscription to from providers list
-      for(let subscription of this.subscriptions) {
-        let index = this.providers.indexOf(subscription);
-        if(index >= 0) {
+      // Remove all providers that a user has a subscription to from providers list
+      for (const subscription of this.subscriptions) {
+        const index = this.providers.indexOf(subscription);
+        if (index >= 0) {
           this.providers.splice(index, 1);
         }
       }
@@ -45,7 +45,7 @@ export class SubscriptionsPage implements OnInit {
   }
 
   removeSub(subscription): void {
-    let index = this.subscriptions.indexOf(subscription);
+    const index = this.subscriptions.indexOf(subscription);
     this.subscriptions.splice(index, 1);
     this.providers.push(subscription);
     this.subscriptionDB.removeSub(this.user.getId(), subscription).subscribe();
@@ -56,12 +56,12 @@ export class SubscriptionsPage implements OnInit {
   }
 
   addSub() {
-    if(this.lastSelected) {
+    if (this.lastSelected) {
       this.subscriptionDB.addSub(this.user.getId(), this.lastSelected).subscribe();
-      let index = this.providers.indexOf(this.lastSelected);
+      const index = this.providers.indexOf(this.lastSelected);
       this.providers.splice(index, 1);
       this.subscriptions.push(this.lastSelected);
-      this.lastSelected = "";
+      this.lastSelected = '';
     }
   }
 

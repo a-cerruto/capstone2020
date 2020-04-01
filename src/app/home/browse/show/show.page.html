@@ -10,9 +10,9 @@
 <ion-content>
   <div *ngIf="loaded">
     <ion-card>
-      <img src="{{ details.artwork_448x252 }}"/>
+      <ion-img src="{{ details.artwork_448x252 }}"></ion-img>
       <ion-card-header>
-        <ion-card-title *ngIf="details.rating != 'Not Rated'">{{ details.rating }}</ion-card-title>
+        <ion-card-title *ngIf="details.rating">{{ details.rating }}</ion-card-title>
         <ion-card-subtitle *ngIf="details.network">{{ details.network }}</ion-card-subtitle>
         <ion-card-subtitle *ngIf="
                             details.air_day_of_week &&
@@ -22,12 +22,35 @@
         </ion-card-subtitle>
       </ion-card-header>
     </ion-card>
+
     <ion-card *ngIf="details.overview">
       <ion-card-header>
         <ion-card-title>Overview</ion-card-title>
       </ion-card-header>
       <ion-card-content>{{ details.overview }}</ion-card-content>
     </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Episodes</ion-card-title>
+        <ion-list-header>Season #{{ season }}</ion-list-header>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-slides [options]="episodeSlideOptions">
+          <ion-slide *ngFor="let episode of episodes">
+            <ion-card button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/episode/' + details.title + '/' + episode.id">
+              <img src="{{ episode.thumbnail_304x171 }}"/>
+              <ion-card-header>
+                <ion-card-subtitle>Episode #{{ episode.episode_number }}</ion-card-subtitle>
+                <ion-card-title>{{ episode.title }}</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>{{ episode.overview }}</ion-card-content>
+            </ion-card>
+          </ion-slide>
+        </ion-slides>
+      </ion-card-content>
+    </ion-card>
+
     <ion-card *ngIf="details.cast.length > 0">
       <ion-card-header>
         <ion-card-title>Cast</ion-card-title>
@@ -36,11 +59,11 @@
         <ion-slides [options]="slideOptions">
           <ion-slide *ngFor="let member of details.cast">
             <ion-card>
-              <img src="{{ member.image }}"/>
+              <ion-img src="{{ member.image }}"></ion-img>
               <ion-card-header>
                 <ion-card-title>{{ member.name }}</ion-card-title>
+                <ion-card-subtitle>{{ member.character_name }}</ion-card-subtitle>
               </ion-card-header>
-              <ion-card-subtitle>{{ member.character_name }}</ion-card-subtitle>
             </ion-card>
           </ion-slide>
         </ion-slides>
