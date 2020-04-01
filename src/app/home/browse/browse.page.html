@@ -17,7 +17,7 @@
     <ion-item>
       <ion-slides [options]="slideOptions">
         <ion-slide *ngFor="let result of featuredResults">
-          <ion-item button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/details/' + result.id">
+          <ion-item button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/' + result.id">
             <img style="border-radius: 4px;" src="{{ result.artwork_304x171 }}"/>
           </ion-item>
         </ion-slide>

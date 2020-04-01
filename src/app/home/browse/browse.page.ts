@@ -42,12 +42,12 @@ export class BrowsePage implements OnInit {
 
   ngOnInit() {
     if (!this.userBrowseSettings) {
-      this.loading.getLoading('Getting personalized settings for ' + this.user.getUsername()).then(() => {
+      this.loading.getLoading('Getting new content. One moment please.').then(() => {
         this.user.areSettingsStored().subscribe(async settingsStored => {
           if (settingsStored) {
             this.userBrowseSettings = this.user.getBrowserSettings();
-            this.loading.dismiss().then(() => {
-              this.populateFeatured();
+            this.populateFeatured().then(() => {
+              this.loading.dismiss();
             });
           }
         });

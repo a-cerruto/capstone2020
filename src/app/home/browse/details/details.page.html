@@ -38,12 +38,13 @@
       <ion-card-content>
         <ion-slides [options]="episodeSlideOptions">
           <ion-slide *ngFor="let episode of episodes">
-            <ion-card button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/episode/' + episode.id">
-              <ion-img src="{{ episode.thumbnail_304x171 }}"></ion-img>
+            <ion-card button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/' + details.title + '/' + episode.id">
+              <img src="{{ episode.thumbnail_304x171 }}"/>
               <ion-card-header>
                 <ion-card-subtitle>Episode #{{ episode.episode_number }}</ion-card-subtitle>
                 <ion-card-title>{{ episode.title }}</ion-card-title>
               </ion-card-header>
+              <ion-card-content>{{ episode.overview }}</ion-card-content>
             </ion-card>
           </ion-slide>
         </ion-slides>

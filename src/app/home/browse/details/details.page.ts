@@ -13,7 +13,7 @@ import { UserService } from '../../../membership/authentication/user.service';
 })
 export class DetailsPage implements OnInit {
 
-  private id: any;
+  private showId: any;
   private details: any;
   private season: any;
   private episodes: any;
@@ -45,10 +45,11 @@ export class DetailsPage implements OnInit {
   }
 
   ngOnInit() {
-    this.id = this.activatedRoute.snapshot.paramMap.get('id');
-    this.server.getShowDetails(this.id).subscribe({
+    this.showId = this.activatedRoute.snapshot.paramMap.get('showId');
+    this.server.getShowDetails(this.showId).subscribe({
       next: async res => {
         let details;
+        await this.storage.remove(this.detailsKey);
         this.storage.ready().then(async () => {
           while (!details) { details = await this.storage.get(this.detailsKey); }
           this.details = details;
@@ -62,7 +63,7 @@ export class DetailsPage implements OnInit {
   }
 
   async getEpisodes() {
-    this.server.getEpisodes(this.id, this.season, this.user.getBrowserSettings()).subscribe({
+    this.server.getEpisodes(this.showId, this.season, this.user.getBrowserSettings()).subscribe({
       next: async res => {
         let episodes;
         await this.storage.remove(this.episodesKey);
