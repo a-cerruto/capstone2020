@@ -8,7 +8,10 @@
 </ion-header>
 
 <ion-content>
-  <div *ngIf="loaded">
+
+  <ion-backdrop *ngIf="backdrop" tabbable="false" style="opacity:100%"></ion-backdrop>
+
+  <div>
     <ion-card>
       <ion-img src="{{ details.artwork_448x252 }}"></ion-img>
       <ion-card-header>
