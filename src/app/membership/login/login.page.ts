@@ -4,6 +4,7 @@ import { FormGroup } from '@angular/forms';
 import { ToastService } from '../../global/services/toast.service';
 import { LoadingService } from '../../global/services/loading.service';
 import { FormService } from '../../global/services/form.service';
+import { AuthenticationService } from '../authentication/authentication.service';
 import { UserService } from '../authentication/user.service';
 
 @Component({
@@ -21,6 +22,7 @@ export class LoginPage implements OnInit {
       private router: Router,
       private loadingService: LoadingService,
       private toastService: ToastService,
+      private authentication: AuthenticationService,
       private user: UserService
   ) {
     this.loginForm = FormService.loginForm();
@@ -32,7 +34,11 @@ export class LoginPage implements OnInit {
     if (this.user.isLoggedIn()) {
       this.router.navigateByUrl('').then();
     } else {
-
+      this.authentication.checkStorage().then((loggedIn) => {
+        let endpoint;
+        loggedIn ? endpoint = '' : endpoint = 'login';
+        this.router.navigateByUrl(endpoint).then();
+      });
     }
   }
 
