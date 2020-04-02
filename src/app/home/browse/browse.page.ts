@@ -23,7 +23,8 @@ export class BrowsePage implements OnInit {
   private comedyResults: any;
   private horrorResults: any;
   private movieResults: any;
-  private loaded: boolean;
+  private resultsLoaded: boolean;
+  private backdrop: boolean;
   private slideOptions: any;
 
   private readonly featuredResultsKey = 'FEATURED_RESULTS';
@@ -40,7 +41,8 @@ export class BrowsePage implements OnInit {
     private toast: ToastService,
     private server: ServerService
   ) {
-    this.loaded = false;
+    this.resultsLoaded = false;
+    this.backdrop = true;
     this.slideOptions = {
       spaceBetween: 0,
       slidesPerView: 2
@@ -49,13 +51,11 @@ export class BrowsePage implements OnInit {
 
   ngOnInit() {
     if (!this.userBrowseSettings) {
-      this.loading.getLoading('Getting new content. One moment please.').then(() => {
+      this.loading.getLoading('Getting new titles...').then(() => {
         this.user.areSettingsStored().subscribe(async settingsStored => {
           if (settingsStored) {
             this.userBrowseSettings = this.user.getBrowserSettings();
-            this.getListings().then(() => {
-              this.loading.dismiss();
-            });
+            this.getListings();
           }
         });
       });
@@ -79,7 +79,9 @@ export class BrowsePage implements OnInit {
     });
     await this.getMovieList(this.movieResultsKey, (results) => {
       this.movieResults = results;
-      this.loaded = true;
+      this.resultsLoaded = true;
+      this.backdrop = false;
+      this.loading.dismiss();
     });
   }
 
