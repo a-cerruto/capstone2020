@@ -19,7 +19,7 @@
 
     <ion-card>
       <ion-card-header>
-        <ion-segment (ionChange)="selectSource($event.detail.value)" value="{{ linkKey }}">
+        <ion-segment (ionChange)="selectSource($event.detail.value)" [value]="linkKey">
           <ion-segment-button *ngIf="details.free_web_sources.length > 0" value="free">
             <ion-label>Free</ion-label>
           </ion-segment-button>

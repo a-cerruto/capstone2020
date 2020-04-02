@@ -7,10 +7,6 @@ const routes: Routes = [
   {
     path: '',
     component: SettingsPage
-  },
-  {
-    path: 'browse',
-    loadChildren: () => import('./browse/browse.module').then( m => m.BrowsePageModule)
   }
 ];
 

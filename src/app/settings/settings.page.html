@@ -11,10 +11,9 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item [routerDirection]="'forward'" [routerLink]="'/settings/browse'" detail>
-      <ion-icon slot="start" name="search"></ion-icon>
-      <ion-label>Browsing Settings</ion-label>
-    </ion-item>
-  </ion-list>
+
+  <ion-segment (ionChange)="changeslide($event.detail.value)" [value]="browse">
+    <ion-segment-button value="browse"></ion-segment-button>
+  </ion-segment>
+
 </ion-content>
