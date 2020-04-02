@@ -64,6 +64,17 @@ export class AuthenticationService {
     );
   }
 
+  async checkStorage() {
+    let user;
+    await this.storage.ready();
+    user = await this.storage.get(this.userKey);
+    if (user) {
+      this.authenticationState.next(true);
+      return true;
+    }
+    return false;
+  }
+
   async logout() {
     await this.storage.remove(this.tokenKey);
     await this.storage.remove(this.userKey);

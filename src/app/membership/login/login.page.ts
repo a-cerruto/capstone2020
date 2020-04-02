@@ -29,12 +29,14 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
+    if (this.user.isLoggedIn()) {
+      this.router.navigateByUrl('').then();
+    } else {
+
+    }
   }
 
   ionViewWillEnter() {
-    if (this.user.isLoggedIn()) {
-      this.router.navigateByUrl('').then();
-    }
   }
 
   ionViewWillLeave() {
