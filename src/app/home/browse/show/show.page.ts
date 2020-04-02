@@ -17,7 +17,7 @@ export class ShowPage implements OnInit {
   private details: any;
   private season: any;
   private episodes: any;
-  private loaded: boolean;
+  private backdrop: boolean;
   private slideOptions: any;
   private episodeSlideOptions: any;
 
@@ -31,7 +31,7 @@ export class ShowPage implements OnInit {
     private user: UserService
   ) {
     this.season = 1;
-    this.loaded = false;
+    this.backdrop = true;
     this.slideOptions = {
       spaceBetween: 0,
       slidesPerView: 2,
@@ -70,7 +70,7 @@ export class ShowPage implements OnInit {
         this.storage.ready().then(async () => {
           while (!episodes) { episodes = await this.storage.get(this.episodesKey); }
           this.episodes = episodes;
-          this.loaded = true;
+          this.backdrop = false;
         });
       },
       error: err => {

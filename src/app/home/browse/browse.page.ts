@@ -86,36 +86,44 @@ export class BrowsePage implements OnInit {
   }
 
   async getShowsList(key, tags, callback) {
-    this.server.getShows(this.userBrowseSettings, tags, key).subscribe({
-      next: async res => {
-        let results;
-        await this.storage.remove(key);
-        this.storage.ready().then(async () => {
-          while (!results) { results = await this.storage.get(key); }
-          callback(results);
-        });
-      },
-      error: err => {
-        console.log(err.status);
-        this.toast.showError(err.status);
-      }
-    });
+    await this.storage.ready();
+    let results = await this.storage.get(key);
+    if (results) {
+      callback(results);
+    } else {
+      this.server.getShows(this.userBrowseSettings, tags, key).subscribe({
+        next: async res => {
+          this.storage.ready().then(async () => {
+            results = await this.storage.get(key);
+            callback(results);
+          });
+        },
+        error: err => {
+          console.log(err.status);
+          this.toast.showError(err.status);
+        }
+      });
+    }
   }
 
   async getMovieList(key, callback) {
-    this.server.getMovies(this.userBrowseSettings, key).subscribe({
-      next: async res => {
-        let results;
-        await this.storage.remove(key);
-        this.storage.ready().then(async () => {
-          while (!results) { results = await this.storage.get(key); }
-          callback(results);
-        });
-      },
-      error: err => {
-        console.log(err.status);
-        this.toast.showError(err.status);
-      }
-    });
+    await this.storage.ready();
+    let results = await this.storage.get(key);
+    if (results) {
+      callback(results);
+    } else {
+      this.server.getMovies(this.userBrowseSettings, key).subscribe({
+        next: async res => {
+          this.storage.ready().then(async () => {
+            results = await this.storage.get(key);
+            callback(results);
+          });
+        },
+        error: err => {
+          console.log(err.status);
+          this.toast.showError(err.status);
+        }
+      });
+    }
   }
 }
