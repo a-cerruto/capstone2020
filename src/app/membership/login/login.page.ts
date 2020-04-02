@@ -33,6 +33,11 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
+    this.buttonPressed = false;
+    this.backdrop = true;
     if (this.user.isLoggedIn()) {
       this.router.navigateByUrl('').then();
     } else {
