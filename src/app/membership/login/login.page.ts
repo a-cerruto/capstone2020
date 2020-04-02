@@ -17,6 +17,7 @@ export class LoginPage implements OnInit {
   private loginForm: FormGroup;
   private validationMessages: any;
   private buttonPressed: boolean;
+  private backdrop: boolean;
 
   constructor(
       private router: Router,
@@ -28,21 +29,20 @@ export class LoginPage implements OnInit {
     this.loginForm = FormService.loginForm();
     this.validationMessages = FormService.validationMessages();
     this.buttonPressed = false;
+    this.backdrop = true;
   }
 
   ngOnInit() {
     if (this.user.isLoggedIn()) {
       this.router.navigateByUrl('').then();
     } else {
-      this.authentication.checkStorage().then((loggedIn) => {
-        let endpoint;
-        loggedIn ? endpoint = '' : endpoint = 'login';
-        this.router.navigateByUrl(endpoint).then();
+      this.loadingService.getLoading().then(() => {
+        this.authentication.checkStorage().then((loggedIn) => {
+          loggedIn ? this.router.navigateByUrl('').then() : this.backdrop = false;
+          this.loadingService.dismiss().then();
+        });
       });
     }
-  }
-
-  ionViewWillEnter() {
   }
 
   ionViewWillLeave() {

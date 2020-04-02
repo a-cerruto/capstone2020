@@ -14,7 +14,7 @@ export class LoadingService {
     } catch (e) {}
   }
 
-  async getLoading(msg: string | 'loading') {
+  async getLoading(msg= 'loading') {
     await this.lc.create({
       message: msg
     }).then((loading) => {
