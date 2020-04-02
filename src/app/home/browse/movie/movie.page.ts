@@ -45,7 +45,9 @@ export class MoviePage implements OnInit {
         this.storage.ready().then(async () => {
           while (!details) { details = await this.storage.get(this.movieKey); }
           this.details = details;
-          this.loaded = true;
+          this.setDefaultSource().then(() => {
+            this.loaded = true;
+          });
         });
       },
       error: err => {
@@ -54,7 +56,23 @@ export class MoviePage implements OnInit {
     });
   }
 
-  selectSource(event) {
+  async setDefaultSource() {
+    if (this.details.free_web_sources.length > 0) {
+      this.linkKey = 'free';
+      this.movieLink = this.details.free_web_sources[0].link;
+    } else if (this.details.subscription_web_sources.length > 0) {
+      this.linkKey = 'subscription';
+      this.movieLink = this.details.subscription_web_sources[0].link;
+    } else if (this.details.purchase_web_sources.length > 0) {
+      this.linkKey = 'purchase';
+      this.movieLink = this.details.purchase_web_sources[0].link;
+    } else {
+      this.movieLink = '';
+    }
+  }
+
+
+    selectSource(event) {
     switch (event) {
       case 'free': this.movieLink = this.details.free_web_sources[0].link; break;
       case 'subscription': this.movieLink = this.details.subscription_web_sources[0].link; break;
