@@ -50,8 +50,13 @@ export class SettingsPage implements OnInit {
     // Slide #1
     this.customizeChannels = false;
     this.slideOptions = {
-      slidesPerView: 1,
-      spaceBetween: 0
+      slidesPerView: 2,
+      spaceBetween: 0,
+      breakpoints: {
+        750: {
+          slidesPerView: 1
+        }
+      }
     };
     // Slide #2
     this.emailForm = FormService.emailForm();
