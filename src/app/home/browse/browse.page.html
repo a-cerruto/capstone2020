@@ -22,7 +22,7 @@
       <ion-label>Featured</ion-label>
     </ion-item-divider>
     <ion-item *ngIf="featuredResults" lines="none">
-      <ion-slides [options]="slideOptions">
+      <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()">
         <ion-slide *ngFor="let result of featuredResults">
           <ion-item detail="false" lines="none" button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/show/' + result.id">
             <img style="border-radius: 4px;" src="{{ result.artwork_304x171 }}"/>
@@ -35,7 +35,7 @@
       <ion-label>Action</ion-label>
     </ion-item-divider>
     <ion-item *ngIf="actionResults" lines="none">
-      <ion-slides [options]="slideOptions">
+      <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()">
         <ion-slide *ngFor="let result of actionResults">
           <ion-item detail="false" lines="none" button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/show/' + result.id">
             <img style="border-radius: 4px;" src="{{ result.artwork_304x171 }}">
@@ -48,7 +48,7 @@
       <ion-label>Comedy</ion-label>
     </ion-item-divider>
     <ion-item *ngIf="comedyResults" lines="none">
-      <ion-slides [options]="slideOptions">
+      <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()">
         <ion-slide *ngFor="let result of comedyResults">
           <ion-item detail="false" lines="none" button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/show/' + result.id">
             <img style="border-radius: 4px;" src="{{ result.artwork_304x171 }}">
@@ -61,7 +61,7 @@
       <ion-label>Horror</ion-label>
     </ion-item-divider>
     <ion-item *ngIf="horrorResults" lines="none">
-      <ion-slides [options]="slideOptions">
+      <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()">
         <ion-slide *ngFor="let result of horrorResults">
           <ion-item detail="false" lines="none" button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/show/' + result.id">
             <img style="border-radius: 4px;" src="{{ result.artwork_304x171 }}">
@@ -76,7 +76,7 @@
       <ion-label>Movies</ion-label>
     </ion-item-divider>
     <ion-item *ngIf="movieResults" lines="none">
-      <ion-slides [options]="slideOptions">
+      <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()">
         <ion-slide *ngFor="let result of movieResults">
           <ion-item detail="false" lines="none" button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/movie/' + result.id">
             <img style="border-radius: 4px;" src="{{ result.poster_240x342 }}">

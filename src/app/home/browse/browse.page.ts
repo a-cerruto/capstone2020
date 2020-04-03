@@ -23,7 +23,7 @@ export class BrowsePage implements OnInit {
   private comedyResults: any;
   private horrorResults: any;
   private movieResults: any;
-  private resultsLoaded: boolean;
+  private resultsLoaded: number;
   private backdrop: boolean;
   private slideOptions: any;
 
@@ -41,8 +41,6 @@ export class BrowsePage implements OnInit {
     private toast: ToastService,
     private server: ServerService
   ) {
-    this.resultsLoaded = false;
-    this.backdrop = true;
     this.slideOptions = {
       spaceBetween: 0,
       slidesPerView: 2
@@ -50,6 +48,8 @@ export class BrowsePage implements OnInit {
   }
 
   ngOnInit() {
+    this.resultsLoaded = 0;
+    this.backdrop = true;
     if (!this.userBrowseSettings) {
       this.loading.getLoading('Getting new titles...').then(() => {
         this.user.areSettingsStored().subscribe(async settingsStored => {
@@ -61,6 +61,15 @@ export class BrowsePage implements OnInit {
       });
     } else {
       this.getListings().then();
+    }
+  }
+
+  slidesLoaded() {
+    this.resultsLoaded += 1;
+    if (this.resultsLoaded === 5) {
+      this.loading.dismiss().then(() => {
+        this.backdrop = false;
+      });
     }
   }
 
@@ -79,9 +88,6 @@ export class BrowsePage implements OnInit {
     });
     await this.getMovieList(this.movieResultsKey, (results) => {
       this.movieResults = results;
-      this.resultsLoaded = true;
-      this.backdrop = false;
-      this.loading.dismiss();
     });
   }
 
