@@ -43,7 +43,36 @@ export class BrowsePage implements OnInit {
   ) {
     this.slideOptions = {
       spaceBetween: 0,
-      slidesPerView: 2
+      slidesPerView: 10,
+      breakpoints: {
+        320: {
+          slidesPerView: 1
+        },
+        450: {
+          slidesPerView: 2
+        },
+        650: {
+          slidesPerView: 3
+        },
+        900: {
+          slidesPerView: 4
+        },
+        1000: {
+          slidesPerView: 5
+        },
+        1100: {
+          slidesPerView: 6
+        },
+        1200: {
+          slidesPerView: 7
+        },
+        1300: {
+          slidesPerView: 8
+        },
+        1440: {
+          slidesPerView: 9
+        }
+      }
     };
   }
 
