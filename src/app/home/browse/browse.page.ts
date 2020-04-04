@@ -82,18 +82,14 @@ export class BrowsePage implements OnInit {
   ngOnInit() {
     this.resultsLoaded = 0;
     this.backdrop = true;
-    if (!this.userBrowseSettings) {
-      this.loading.getLoading('Getting new titles...').then(() => {
-        this.settings.browseSettingsStored().subscribe(async stored => {
-          if (stored) {
-            this.userBrowseSettings = this.user.getBrowserSettings();
-            this.getListings();
-          }
-        });
+    this.loading.getLoading('Getting new titles...').then(() => {
+      this.settings.browseSettingsStored().subscribe(async stored => {
+        if (stored) {
+          this.userBrowseSettings = this.user.getBrowserSettings();
+          this.getListings();
+        }
       });
-    } else {
-      this.getListings().then();
-    }
+    });
   }
 
   slidesLoaded() {

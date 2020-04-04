@@ -12,6 +12,10 @@
 
 <ion-content>
 
+  <ion-refresher slot="fixed" (ionRefresh)="refreshSettings($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <ion-slides pager="true" [options]="slideOptions">
 
     <ion-slide>

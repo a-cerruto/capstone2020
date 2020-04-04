@@ -7,7 +7,6 @@ import { ToastService } from '../global/services/toast.service';
 import { FormService } from '../global/services/form.service';
 
 import { SettingsService } from './settings.service';
-import { AuthenticationService } from '../membership/authentication/authentication.service';
 import { UserService } from '../membership/authentication/user.service';
 
 import { SettingsBrowse } from './interfaces/settings-browse';
@@ -58,7 +57,6 @@ export class SettingsPage implements OnInit {
     private loading: LoadingService,
     private toast: ToastService,
     private settings: SettingsService,
-    private authentication: AuthenticationService,
     private user: UserService
   ) {
     // Slide #1
@@ -86,28 +84,37 @@ export class SettingsPage implements OnInit {
 
 
   ngOnInit() {
-    this.userBrowseSettings = this.user.getBrowserSettings();
-    if (!this.userBrowseSettings) {
-      this.loading.getLoading().then(() => {
-        this.settings.browseSettingsStored().subscribe(async stored => {
-          if (stored) {
-            this.userBrowseSettings = this.user.getBrowserSettings();
-          }
-        });
-      });
-    }
+    this.settings.browseSettingsStored().subscribe(async stored => {
+      if (stored) {
+        this.userBrowseSettings = this.user.getBrowseSettings();
+        console.log('settings updated');
+        console.log(this.userBrowseSettings);
+      }
+    });
   }
 
   // Slide #1
 
   updateSettings(key, value) {
-    this.settings.updateBrowserSettings(this.user.getId(), key, value.toString()).subscribe({
+    this.settings.updateBrowseSettings(this.user.getId(), key, value.toString()).subscribe({
       next: res => {
         console.log(res);
-        this.user.updateBrowserSettings();
       },
       error: err => {
         console.log(err);
+      }
+    });
+  }
+
+  async refreshSettings(event) {
+    this.settings.getBrowseSettings(this.user.getId()).subscribe({
+      next: res => {
+        console.log(res);
+        event.target.complete();
+      },
+      error: err => {
+        console.log(err);
+        event.target.complete();
       }
     });
   }
@@ -154,7 +161,7 @@ export class SettingsPage implements OnInit {
   async updateEmail(form) {
     this.buttonPressed = true;
     await this.loading.getLoading('Updating Email...');
-    this.authentication.updateDetails(this.user.getId(), 'email', form.value).subscribe( {
+    this.user.setEmail(form.value).subscribe( {
       next: async res => {
         console.log(res);
         this.loading.dismiss().then(() => {
@@ -175,7 +182,7 @@ export class SettingsPage implements OnInit {
   async updateUsername(form) {
     this.buttonPressed = true;
     await this.loading.getLoading('Updating Username...');
-    this.authentication.updateDetails(this.user.getId(), 'username', form.value).subscribe({
+    this.user.setUsername(form.value).subscribe({
       next: async res => {
         console.log(res);
         this.loading.dismiss().then(() => {
@@ -196,7 +203,7 @@ export class SettingsPage implements OnInit {
   async updatePassword(form) {
     this.buttonPressed = true;
     await this.loading.getLoading('Updating Password');
-    this.authentication.updateDetails(this.user.getId(), 'password', form.value).subscribe({
+    this.user.setPassword(form.value).subscribe({
       next: async res => {
         console.log(res);
         this.loading.dismiss().then(() => {

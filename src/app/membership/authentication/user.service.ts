@@ -20,10 +20,10 @@ export class UserService {
   private id: number;
   private email: string;
   private username: string;
-  private browserSettings: SettingsBrowse;
+  private browseSettings: SettingsBrowse;
 
   private readonly userKey: string;
-  private readonly browserSettingsKey: string;
+  private readonly browseSettingsKey: string;
 
 
   constructor(
@@ -35,13 +35,20 @@ export class UserService {
       private settings: SettingsService
   ) {
     this.userKey = 'USER';
-    this.browserSettingsKey = 'BROWSER_SETTINGS';
+    this.browseSettingsKey = 'BROWSE_SETTINGS';
 
     this.authentication.isLoggedIn().subscribe(async loggedIn => {
       console.log('User is logged in: ' + loggedIn);
       this.loggedIn = loggedIn;
       if (this.loggedIn) {
         this.getDetails();
+      }
+    });
+
+    this.settings.browseSettingsStored().subscribe(async stored => {
+      if (stored) {
+        await this.storage.ready();
+        this.browseSettings = await this.storage.get(this.browseSettingsKey);
       }
     });
   }
@@ -52,7 +59,7 @@ export class UserService {
 
   async logout() {
     await this.loading.getLoading('Logging out...');
-    await this.storage.remove(this.browserSettingsKey);
+    await this.storage.remove(this.browseSettingsKey);
     await this.authentication.logout();
     await this.loading.dismiss();
     await this.router.navigateByUrl('/login');
@@ -80,22 +87,9 @@ export class UserService {
   }
 
   async initBrowserSettings() {
-    this.settings.checkStorage().then(async (stored) => {
-      if (stored) {
-        await this.storage.ready();
-        this.browserSettings = await this.storage.get(this.browserSettingsKey);
-      } else {
-        this.updateBrowserSettings();
-      }
-    });
-  }
-
-  updateBrowserSettings() {
-    this.settings.getBrowserSettings(this.id).subscribe({
+    this.settings.getBrowseSettings(this.id).subscribe({
       next: res => {
-        this.storage.ready().then(async () => {
-          this.browserSettings = await this.storage.get(this.browserSettingsKey);
-        });
+        console.log(res);
       },
       error: err => {
         console.log(err.status);
@@ -112,12 +106,24 @@ export class UserService {
     return this.email;
   }
 
+  setEmail(value) {
+    return this.authentication.updateDetails(this.id, 'email', value);
+  }
+
   getUsername() {
     return this.username;
   }
 
-  getBrowserSettings() {
-    return this.browserSettings;
+  setUsername(value) {
+    return this.authentication.updateDetails(this.id, 'username', value);
+  }
+
+  setPassword(value) {
+    return this.authentication.updateDetails(this.id, 'password', value);
+  }
+
+  getBrowseSettings() {
+    return this.browseSettings;
   }
 
 }

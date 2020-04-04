@@ -17,7 +17,7 @@ export class SettingsService {
   private readonly serverHostName: string;
   private readonly serverAddress: string;
 
-  private readonly browserSettingsKey: string;
+  private readonly browseSettingsKey: string;
   private settingsStored = new BehaviorSubject(false);
 
   constructor(
@@ -33,26 +33,15 @@ export class SettingsService {
       this.serverHostName +
       this.serverPort;
 
-    this.browserSettingsKey = 'BROWSER_SETTINGS';
+    this.browseSettingsKey = 'BROWSE_SETTINGS';
   }
 
-  async checkStorage() {
-    let settings;
-    await this.storage.ready();
-    settings = await this.storage.get(this.browserSettingsKey);
-    if (settings) {
-      this.settingsStored.next(true);
-      return true;
-    }
-    return false;
-  }
-
-  getBrowserSettings(userId: number): Observable<SettingsBrowse> {
+  getBrowseSettings(userId: number): Observable<SettingsBrowse> {
     return this.http.post<SettingsBrowse>(this.serverAddress + '/browse', { userId }).pipe(
       tap(async (res: SettingsBrowse) => {
         if (res) {
           this.storage.ready().then(async () => {
-            await this.storage.set(this.browserSettingsKey, res);
+            await this.storage.set(this.browseSettingsKey, res);
             this.settingsStored.next(true);
           });
         }
@@ -60,12 +49,12 @@ export class SettingsService {
     );
   }
 
-  updateBrowserSettings(userId: number, key: string, value: string): Observable<SettingsBrowse> {
+  updateBrowseSettings(userId: number, key: string, value: string): Observable<SettingsBrowse> {
     return this.http.post<SettingsBrowse>(this.serverAddress + '/update', { userId, key, value }).pipe(
       tap(async (res: SettingsBrowse) => {
         if (res) {
           this.storage.ready().then(async () => {
-            await this.storage.set(this.browserSettingsKey, res);
+            await this.storage.set(this.browseSettingsKey, res);
             this.settingsStored.next(true);
           });
         }
