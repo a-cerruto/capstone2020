@@ -36,6 +36,17 @@ export class SettingsService {
     this.browserSettingsKey = 'BROWSER_SETTINGS';
   }
 
+  async checkStorage() {
+    let settings;
+    await this.storage.ready();
+    settings = await this.storage.get(this.browserSettingsKey);
+    if (settings) {
+      this.settingsStored.next(true);
+      return true;
+    }
+    return false;
+  }
+
   getBrowserSettings(userId: number): Observable<SettingsBrowse> {
     return this.http.post<SettingsBrowse>(this.serverAddress + '/browse', { userId }).pipe(
       tap(async (res: SettingsBrowse) => {

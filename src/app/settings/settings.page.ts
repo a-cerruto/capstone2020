@@ -104,7 +104,7 @@ export class SettingsPage implements OnInit {
     this.settings.updateBrowserSettings(this.user.getId(), key, value.toString()).subscribe({
       next: res => {
         console.log(res);
-        this.user.fetchBrowserSettings().then();
+        this.user.updateBrowserSettings();
       },
       error: err => {
         console.log(err);

@@ -65,7 +65,7 @@ export class UserService {
   getDetails() {
     let user;
     this.storage.ready().then(async () => {
-      while (!user) { user = await this.storage.get(this.userKey); }
+      user = await this.storage.get(this.userKey);
       this.id = user.id;
       this.email = user.email;
       this.username = user.username;
@@ -74,19 +74,27 @@ export class UserService {
       console.log('email: ' + this.email);
       console.log('username: ' + this.username);
 
-      this.fetchBrowserSettings();
+      this.initBrowserSettings();
 
     });
   }
 
-  async fetchBrowserSettings() {
+  async initBrowserSettings() {
+    this.settings.checkStorage().then(async (stored) => {
+      if (stored) {
+        await this.storage.ready();
+        this.browserSettings = await this.storage.get(this.browserSettingsKey);
+      } else {
+        this.updateBrowserSettings();
+      }
+    });
+  }
+
+  updateBrowserSettings() {
     this.settings.getBrowserSettings(this.id).subscribe({
       next: res => {
-        let settings;
         this.storage.ready().then(async () => {
-          settings = await this.storage.get(this.browserSettingsKey);
-          this.browserSettings = settings;
-          console.log(this.browserSettings);
+          this.browserSettings = await this.storage.get(this.browserSettingsKey);
         });
       },
       error: err => {
