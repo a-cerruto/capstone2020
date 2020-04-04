@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, BehaviorSubject } from 'rxjs';
 
 import { Storage } from '@ionic/storage';
 
@@ -26,7 +25,6 @@ export class UserService {
   private readonly userKey: string;
   private readonly browserSettingsKey: string;
 
-  private settingsStored = new BehaviorSubject(false);
 
   constructor(
       private router: Router,
@@ -55,7 +53,6 @@ export class UserService {
   async logout() {
     await this.loading.getLoading('Logging out...');
     await this.storage.remove(this.browserSettingsKey);
-    this.settingsStored.next(false);
     await this.authentication.logout();
     await this.loading.dismiss();
     await this.router.navigateByUrl('/login');
@@ -77,26 +74,26 @@ export class UserService {
       console.log('email: ' + this.email);
       console.log('username: ' + this.username);
 
-      this.settings.getDefaultBrowserSettings(this.id).subscribe({
-        next: res => {
-          let settings;
-          this.storage.ready().then(async () => {
-            while (!settings) { settings = await this.storage.get(this.browserSettingsKey); }
-            this.browserSettings = settings;
-            this.settingsStored.next(true);
-            console.log(this.browserSettings);
-          });
-        },
-        error: err => {
-          console.log(err.status);
-          this.toast.showError(err.status);
-        }
-      });
+      this.fetchBrowserSettings();
+
     });
   }
 
-  areSettingsStored() {
-    return this.settingsStored.asObservable();
+  async fetchBrowserSettings() {
+    this.settings.getBrowserSettings(this.id).subscribe({
+      next: res => {
+        let settings;
+        this.storage.ready().then(async () => {
+          settings = await this.storage.get(this.browserSettingsKey);
+          this.browserSettings = settings;
+          console.log(this.browserSettings);
+        });
+      },
+      error: err => {
+        console.log(err.status);
+        this.toast.showError(err.status);
+      }
+    });
   }
 
   getId() {

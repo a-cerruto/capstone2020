@@ -26,20 +26,20 @@
 
           <ion-item>
             <ion-label>Include Pre-orders</ion-label>
-            <ion-toggle (ionChange)="test($event)"></ion-toggle>
+            <ion-toggle (ionChange)="updateSettings('include_preorders', $event.detail.checked)" [checked]="userBrowseSettings.include_preorders"></ion-toggle>
           </ion-item>
 
           <ion-item>
             <ion-label>Include In-theaters</ion-label>
-            <ion-toggle (ionChange)="test($event)"></ion-toggle>
+            <ion-toggle (ionChange)="updateSettings('include_in_theaters', $event.detail.checked)" [checked]="userBrowseSettings.include_in_theaters"></ion-toggle>
           </ion-item>
 
           <ion-item-divider></ion-item-divider>
 
           <ion-item>
             <ion-label>Channels</ion-label>
-            <ion-select (ionChange)="channelSelection($event.detail.value)">
-              <ion-select-option *ngFor="let option of channelOptions" [value]="option">{{ option }}</ion-select-option>
+            <ion-select (ionChange)="channelSelection($event.detail.value)" [placeholder]="userBrowseSettings.channelList">
+              <ion-select-option *ngFor="let option of channelList" [value]="option.value">{{ option.key }}</ion-select-option>
             </ion-select>
           </ion-item>
 
@@ -47,8 +47,8 @@
             <ion-label>
               <ion-icon slot="icon-only" name="tv"></ion-icon>
             </ion-label>
-            <ion-select multiple="true" cancelText="Cancel" okText="Update!" (ionChange)="test($event)" value="All">
-              <ion-select-option *ngFor="let option of channelList" [value]="option">{{ option }}</ion-select-option>
+            <ion-select multiple="true" cancelText="Cancel" okText="Update!" (ionChange)="updateSettings('channels', $event.detail.value)" [placeholder]="userBrowseSettings.channels">
+              <ion-select-option *ngFor="let option of channelOptions" [value]="option">{{ option }}</ion-select-option>
             </ion-select>
           </ion-item>
 
@@ -56,7 +56,7 @@
 
           <ion-item>
             <ion-label>Sources</ion-label>
-            <ion-select multiple="true" cancelText="Cancel" okText="Update!" (ionChange)="test($event)" value="All">
+            <ion-select multiple="true" cancelText="Cancel" okText="Update!" (ionChange)="updateSettings('sources', $event.detail.value)" [placeholder]="userBrowseSettings.sources">
               <ion-select-option *ngFor="let option of sourceOptions" [value]="option">{{ option }}</ion-select-option>
             </ion-select>
           </ion-item>
@@ -65,7 +65,7 @@
 
           <ion-item>
             <ion-label>Platforms</ion-label>
-            <ion-select multiple="true" cancelText="Cancel" okText="Update!" (ionChange)="test($event)" value="All">
+            <ion-select multiple="true" cancelText="Cancel" okText="Update!" (ionChange)="updateSettings('platforms', $event.detail.value)" [placeholder]="userBrowseSettings.platforms">
               <ion-select-option *ngFor="let option of platformOptions" [value]="option">{{ option }}</ion-select-option>
             </ion-select>
           </ion-item>

@@ -18,6 +18,7 @@ export class SettingsService {
   private readonly serverAddress: string;
 
   private readonly browserSettingsKey: string;
+  private settingsStored = new BehaviorSubject(false);
 
   constructor(
     private http: HttpClient,
@@ -35,15 +36,33 @@ export class SettingsService {
     this.browserSettingsKey = 'BROWSER_SETTINGS';
   }
 
-  getDefaultBrowserSettings(id: number): Observable<SettingsBrowse> {
-    return this.http.post<SettingsBrowse>(this.serverAddress + '/browse', { user_id: id }).pipe(
+  getBrowserSettings(userId: number): Observable<SettingsBrowse> {
+    return this.http.post<SettingsBrowse>(this.serverAddress + '/browse', { userId }).pipe(
       tap(async (res: SettingsBrowse) => {
         if (res) {
           this.storage.ready().then(async () => {
             await this.storage.set(this.browserSettingsKey, res);
+            this.settingsStored.next(true);
           });
         }
       })
     );
+  }
+
+  updateBrowserSettings(userId: number, key: string, value: string): Observable<SettingsBrowse> {
+    return this.http.post<SettingsBrowse>(this.serverAddress + '/update', { userId, key, value }).pipe(
+      tap(async (res: SettingsBrowse) => {
+        if (res) {
+          this.storage.ready().then(async () => {
+            await this.storage.set(this.browserSettingsKey, res);
+            this.settingsStored.next(true);
+          });
+        }
+      })
+    );
+  }
+
+  browseSettingsStored() {
+    return this.settingsStored.asObservable();
   }
 }

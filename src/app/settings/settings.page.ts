@@ -6,8 +6,8 @@ import { LoadingService } from '../global/services/loading.service';
 import { ToastService } from '../global/services/toast.service';
 import { FormService } from '../global/services/form.service';
 
-import { AccountService } from './account.service';
 import { SettingsService } from './settings.service';
+import { AuthenticationService } from '../membership/authentication/authentication.service';
 import { UserService } from '../membership/authentication/user.service';
 
 import { SettingsBrowse } from './interfaces/settings-browse';
@@ -22,11 +22,25 @@ export class SettingsPage implements OnInit {
   // Slide #1
   private slideOptions: any;
   private customizeChannels: boolean;
-  private channelOptions = ['All', 'Subscriptions Only', 'Custom'];
-  private channelList = ['Amazon Prime', 'Netflix', 'Hulu', 'HBO'];
-  private sourceOptions = ['Free', 'Tv Everywhere', 'Subscription', 'Purchase'];
-  private platformOptions = ['Web', 'iOS', 'Android'];
-  private browseSettings: SettingsBrowse;
+  private channelList = [
+    {
+      key: 'All',
+      value: 'all',
+    },
+    {
+      key: 'Subscriptions Only',
+      value: 'subscription'
+    },
+    {
+      key: 'Custom',
+      value: 'custom'
+    }
+  ];
+
+  private channelOptions = ['amazon_prime', 'netflix', 'hulu', 'hbo'];
+  private sourceOptions = ['free', 'tv_everywhere', 'subscription', 'purchase'];
+  private platformOptions = ['web', 'ios', 'android'];
+  private userBrowseSettings: SettingsBrowse;
 
   // Slide #2
   private emailForm: FormGroup;
@@ -43,8 +57,8 @@ export class SettingsPage implements OnInit {
     private storage: Storage,
     private loading: LoadingService,
     private toast: ToastService,
-    private account: AccountService,
     private settings: SettingsService,
+    private authentication: AuthenticationService,
     private user: UserService
   ) {
     // Slide #1
@@ -72,22 +86,47 @@ export class SettingsPage implements OnInit {
 
 
   ngOnInit() {
-    this.browseSettings = this.user.getBrowserSettings();
+    this.userBrowseSettings = this.user.getBrowserSettings();
+    if (!this.userBrowseSettings) {
+      this.loading.getLoading().then(() => {
+        this.settings.browseSettingsStored().subscribe(async stored => {
+          if (stored) {
+            this.userBrowseSettings = this.user.getBrowserSettings();
+          }
+        });
+      });
+    }
   }
 
   // Slide #1
 
-  changeSlide(value) {
-    console.log(value);
+  updateSettings(key, value) {
+    this.settings.updateBrowserSettings(this.user.getId(), key, value.toString()).subscribe({
+      next: res => {
+        console.log(res);
+        this.user.fetchBrowserSettings().then();
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
   }
 
-  test(ev) {
-    console.log(ev);
-  }
-
-  channelSelection(value) {
-    if (value === this.channelOptions[2]) {
-      this.customizeChannels = true;
+  channelSelection(listType) {
+    switch (listType) {
+      case this.channelList[0].value:
+        this.customizeChannels = false;
+        this.updateSettings('channelList', 'all');
+        this.updateSettings('channels', 'all');
+        break;
+      case this.channelList[1].value:
+        this.customizeChannels = false;
+        this.updateSettings('channelList', 'subscriptions');
+        break;
+      case this.channelList[2].value:
+        this.customizeChannels = true;
+        this.updateSettings('channelList', 'custom');
+        break;
     }
   }
 
@@ -115,13 +154,11 @@ export class SettingsPage implements OnInit {
   async updateEmail(form) {
     this.buttonPressed = true;
     await this.loading.getLoading('Updating Email...');
-    const value = form.value;
-    const id = this.user.getId();
-    this.account.updateEmail({value, id}).subscribe( {
+    this.authentication.updateDetails(this.user.getId(), 'email', form.value).subscribe( {
       next: async res => {
         console.log(res);
         this.loading.dismiss().then(() => {
-          this.toast.showSuccess('Email has been updated to ' + value.email);
+          this.toast.showSuccess('Email has been updated to ' + res.email);
           this.resetButtons();
         });
       },
@@ -138,13 +175,11 @@ export class SettingsPage implements OnInit {
   async updateUsername(form) {
     this.buttonPressed = true;
     await this.loading.getLoading('Updating Username...');
-    const value = form.value;
-    const id = this.user.getId();
-    this.account.updateUsername({value, id}).subscribe({
+    this.authentication.updateDetails(this.user.getId(), 'username', form.value).subscribe({
       next: async res => {
         console.log(res);
         this.loading.dismiss().then(() => {
-          this.toast.showSuccess('Username has been updated to ' + value.username);
+          this.toast.showSuccess('Username has been updated to ' + res.username);
           this.resetButtons();
         });
       },
@@ -161,9 +196,7 @@ export class SettingsPage implements OnInit {
   async updatePassword(form) {
     this.buttonPressed = true;
     await this.loading.getLoading('Updating Password');
-    const value = form.value;
-    const id = this.user.getId();
-    this.account.updatePassword({value, id}).subscribe({
+    this.authentication.updateDetails(this.user.getId(), 'password', form.value).subscribe({
       next: async res => {
         console.log(res);
         this.loading.dismiss().then(() => {

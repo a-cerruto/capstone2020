@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { Storage } from '@ionic/storage';
 
 import { LoadingService } from '../../global/services/loading.service';
 import { ToastService } from '../../global/services/toast.service';
+
+import { SettingsService } from '../../settings/settings.service';
 import { UserService } from '../../membership/authentication/user.service';
 import { ServerService } from './server.service';
 
-import { SettingsBrowse } from '../../settings/interfaces/settings-browse';
+import {SettingsBrowse} from '../../settings/interfaces/settings-browse';
+
 
 @Component({
   selector: 'app-browse',
@@ -36,9 +38,10 @@ export class BrowsePage implements OnInit {
   constructor(
     private router: Router,
     private storage: Storage,
-    private user: UserService,
     private loading: LoadingService,
     private toast: ToastService,
+    private settings: SettingsService,
+    private user: UserService,
     private server: ServerService
   ) {
     this.slideOptions = {
@@ -81,8 +84,8 @@ export class BrowsePage implements OnInit {
     this.backdrop = true;
     if (!this.userBrowseSettings) {
       this.loading.getLoading('Getting new titles...').then(() => {
-        this.user.areSettingsStored().subscribe(async settingsStored => {
-          if (settingsStored) {
+        this.settings.browseSettingsStored().subscribe(async stored => {
+          if (stored) {
             this.userBrowseSettings = this.user.getBrowserSettings();
             this.getListings();
           }

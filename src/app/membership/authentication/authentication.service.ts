@@ -54,13 +54,27 @@ export class AuthenticationService {
     return this.http.post(this.serverAddress + '/login', user).pipe(
         tap(async (res: Authentication) => {
           if (res.user) {
-            this.authenticationState.next(true);
             this.storage.ready().then(async () => {
               await this.storage.set(this.tokenKey, res.access_token);
               await this.storage.set(this.userKey, res.user);
+              this.authenticationState.next(true);
             });
           }
         })
+    );
+  }
+
+  updateDetails(userId, key, value): Observable<User> {
+    return this.http.post<User>(this.serverAddress + '/update', { userId, key, value }).pipe(
+      tap(async (res: User) => {
+        if (res) {
+          this.storage.ready().then(async () => {
+            this.storage.set(this.userKey, res).then(() => {
+              this.authenticationState.next(true);
+            });
+          });
+        }
+      })
     );
   }
 
