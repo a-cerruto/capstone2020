@@ -116,16 +116,13 @@ export class SettingsPage implements OnInit {
   channelSelection(listType) {
     switch (listType) {
       case this.channelList[0].value:
-        this.customizeChannels = false;
         this.updateSettings('channelList', 'all');
         this.updateSettings('channels', 'all');
         break;
       case this.channelList[1].value:
-        this.customizeChannels = false;
         this.updateSettings('channelList', 'subscriptions');
         break;
       case this.channelList[2].value:
-        this.customizeChannels = true;
         this.updateSettings('channelList', 'custom');
         break;
     }
