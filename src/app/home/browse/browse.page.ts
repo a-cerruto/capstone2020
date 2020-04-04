@@ -5,7 +5,6 @@ import { Storage } from '@ionic/storage';
 import { LoadingService } from '../../global/services/loading.service';
 import { ToastService } from '../../global/services/toast.service';
 
-import { SettingsService } from '../../settings/settings.service';
 import { UserService } from '../../membership/authentication/user.service';
 import { ServerService } from './server.service';
 
@@ -40,7 +39,6 @@ export class BrowsePage implements OnInit {
     private storage: Storage,
     private loading: LoadingService,
     private toast: ToastService,
-    private settings: SettingsService,
     private user: UserService,
     private server: ServerService
   ) {
@@ -83,12 +81,17 @@ export class BrowsePage implements OnInit {
     this.resultsLoaded = 0;
     this.backdrop = true;
     this.loading.getLoading('Getting new titles...').then(() => {
-      this.settings.browseSettingsStored().subscribe(async stored => {
-        if (stored) {
-          this.userBrowseSettings = this.user.getBrowserSettings();
-          this.getListings();
-        }
-      });
+      if (this.user.areSettingsStored()) {
+        this.userBrowseSettings = this.user.getBrowseSettings();
+        this.getListings().then();
+      } else {
+        this.user.areSettingsStored().subscribe(async stored => {
+          if (stored) {
+            this.userBrowseSettings = this.user.getBrowseSettings();
+            this.getListings().then();
+          }
+        });
+      }
     });
   }
 

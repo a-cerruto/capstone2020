@@ -20,7 +20,7 @@
 
     <ion-slide>
       <ion-grid>
-        <ion-col>
+        <ion-col *ngIf="userBrowseSettings">
 
           <div class="ion-text-center">
             <h3>Search Filters</h3>
@@ -47,7 +47,7 @@
             </ion-select>
           </ion-item>
 
-          <ion-item *ngIf="customizeChannels">
+          <ion-item *ngIf="userBrowseSettings.channelList === 'custom'">
             <ion-label>
               <ion-icon slot="icon-only" name="tv"></ion-icon>
             </ion-label>

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 
 import { Storage } from '@ionic/storage';
 
@@ -16,14 +17,15 @@ import { SettingsBrowse } from '../../settings/interfaces/settings-browse';
 export class UserService {
 
   private loggedIn = false;
+  private settingsStored = new BehaviorSubject(false);
 
   private id: number;
   private email: string;
   private username: string;
   private browseSettings: SettingsBrowse;
 
-  private readonly userKey: string;
-  private readonly browseSettingsKey: string;
+  private readonly userKey = 'USER';
+  private readonly browseSettingsKey = 'BROWSE_SETTINGS';
 
 
   constructor(
@@ -34,22 +36,15 @@ export class UserService {
       private authentication: AuthenticationService,
       private settings: SettingsService
   ) {
-    this.userKey = 'USER';
-    this.browseSettingsKey = 'BROWSE_SETTINGS';
-
     this.authentication.isLoggedIn().subscribe(async loggedIn => {
       console.log('User is logged in: ' + loggedIn);
       this.loggedIn = loggedIn;
       if (this.loggedIn) {
-        this.getDetails();
+         this.initDetails();
       }
     });
-
-    this.settings.browseSettingsStored().subscribe(async stored => {
-      if (stored) {
-        await this.storage.ready();
-        this.browseSettings = await this.storage.get(this.browseSettingsKey);
-      }
+    this.settings.areSettingsStored().subscribe(async stored => {
+      if (stored) { this.initSettings(); } else { this.settingsStored.next(false); }
     });
   }
 
@@ -69,7 +64,7 @@ export class UserService {
     return this.loggedIn;
   }
 
-  getDetails() {
+  initDetails() {
     let user;
     this.storage.ready().then(async () => {
       user = await this.storage.get(this.userKey);
@@ -80,21 +75,15 @@ export class UserService {
       console.log('id: ' + this.id);
       console.log('email: ' + this.email);
       console.log('username: ' + this.username);
-
-      this.initBrowserSettings();
-
+      this.fetchSettings();
     });
   }
 
-  async initBrowserSettings() {
-    this.settings.getBrowseSettings(this.id).subscribe({
-      next: res => {
-        console.log(res);
-      },
-      error: err => {
-        console.log(err.status);
-        this.toast.showError(err.status);
-      }
+  initSettings() {
+    this.storage.ready().then(async () => {
+      this.browseSettings = await this.storage.get(this.browseSettingsKey);
+      this.settingsStored.next(true);
+      console.log(this.browseSettings);
     });
   }
 
@@ -122,8 +111,28 @@ export class UserService {
     return this.authentication.updateDetails(this.id, 'password', value);
   }
 
+  areSettingsStored() {
+    return this.settingsStored.asObservable();
+  }
+
+  async fetchSettings() {
+    await this.settings.getBrowseSettings(this.id).subscribe({
+      next: res => {
+        console.log(res);
+      },
+      error: err => {
+        console.log(err.status);
+        this.toast.showError(err.status);
+      }
+    });
+  }
+
   getBrowseSettings() {
     return this.browseSettings;
+  }
+
+  setBrowseSettings(key, value) {
+    return this.settings.updateBrowseSettings(this.id, key, value.toString());
   }
 
 }

@@ -63,7 +63,7 @@ export class ShowPage implements OnInit {
   }
 
   async getEpisodes() {
-    this.server.getEpisodes(this.showId, this.season, this.user.getBrowserSettings()).subscribe({
+    this.server.getEpisodes(this.showId, this.season, this.user.getBrowseSettings()).subscribe({
       next: async res => {
         let episodes;
         await this.storage.remove(this.episodesKey);

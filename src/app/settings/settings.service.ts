@@ -18,7 +18,7 @@ export class SettingsService {
   private readonly serverAddress: string;
 
   private readonly browseSettingsKey: string;
-  private settingsStored = new BehaviorSubject(false);
+  private stored = new BehaviorSubject(false);
 
   constructor(
     private http: HttpClient,
@@ -42,7 +42,7 @@ export class SettingsService {
         if (res) {
           this.storage.ready().then(async () => {
             await this.storage.set(this.browseSettingsKey, res);
-            this.settingsStored.next(true);
+            this.stored.next(true);
           });
         }
       })
@@ -55,14 +55,14 @@ export class SettingsService {
         if (res) {
           this.storage.ready().then(async () => {
             await this.storage.set(this.browseSettingsKey, res);
-            this.settingsStored.next(true);
+            this.stored.next(true);
           });
         }
       })
     );
   }
 
-  browseSettingsStored() {
-    return this.settingsStored.asObservable();
+  areSettingsStored() {
+    return this.stored.asObservable();
   }
 }

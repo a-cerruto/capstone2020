@@ -6,7 +6,6 @@ import { LoadingService } from '../global/services/loading.service';
 import { ToastService } from '../global/services/toast.service';
 import { FormService } from '../global/services/form.service';
 
-import { SettingsService } from './settings.service';
 import { UserService } from '../membership/authentication/user.service';
 
 import { SettingsBrowse } from './interfaces/settings-browse';
@@ -20,7 +19,7 @@ export class SettingsPage implements OnInit {
 
   // Slide #1
   private slideOptions: any;
-  private customizeChannels: boolean;
+  private customChannels: boolean;
   private channelList = [
     {
       key: 'All',
@@ -56,11 +55,9 @@ export class SettingsPage implements OnInit {
     private storage: Storage,
     private loading: LoadingService,
     private toast: ToastService,
-    private settings: SettingsService,
     private user: UserService
   ) {
     // Slide #1
-    this.customizeChannels = false;
     this.slideOptions = {
       slidesPerView: 2,
       spaceBetween: 0,
@@ -84,19 +81,24 @@ export class SettingsPage implements OnInit {
 
 
   ngOnInit() {
-    this.settings.browseSettingsStored().subscribe(async stored => {
-      if (stored) {
+    this.loading.getLoading().then(() => {
+      if (this.user.areSettingsStored()) {
         this.userBrowseSettings = this.user.getBrowseSettings();
-        console.log('settings updated');
-        console.log(this.userBrowseSettings);
+        this.loading.dismiss().then();
       }
+      this.user.areSettingsStored().subscribe(async stored => {
+        if (stored) {
+          this.userBrowseSettings = this.user.getBrowseSettings();
+          this.loading.dismiss().then();
+        }
+      });
     });
   }
 
   // Slide #1
 
   updateSettings(key, value) {
-    this.settings.updateBrowseSettings(this.user.getId(), key, value.toString()).subscribe({
+    this.user.setBrowseSettings(key, value.toString()).subscribe({
       next: res => {
         console.log(res);
       },
@@ -107,16 +109,8 @@ export class SettingsPage implements OnInit {
   }
 
   async refreshSettings(event) {
-    this.settings.getBrowseSettings(this.user.getId()).subscribe({
-      next: res => {
-        console.log(res);
-        event.target.complete();
-      },
-      error: err => {
-        console.log(err);
-        event.target.complete();
-      }
-    });
+    await this.user.fetchSettings();
+    event.target.complete();
   }
 
   channelSelection(listType) {
