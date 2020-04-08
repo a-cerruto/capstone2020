@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { Storage } from '@ionic/storage';
 
@@ -18,7 +18,6 @@ export class SettingsService {
   private readonly serverAddress: string;
 
   private readonly browseSettingsKey: string;
-  private stored = new BehaviorSubject(false);
 
   constructor(
     private http: HttpClient,
@@ -42,11 +41,14 @@ export class SettingsService {
         if (res) {
           this.storage.ready().then(async () => {
             await this.storage.set(this.browseSettingsKey, res);
-            this.stored.next(true);
           });
         }
       })
     );
+  }
+
+  getOptions(): Observable<any> {
+    return this.http.post<any>(this.serverAddress + '/available', {});
   }
 
   updateBrowseSettings(userId: number, key: string, value: string): Observable<SettingsBrowse> {
@@ -55,14 +57,10 @@ export class SettingsService {
         if (res) {
           this.storage.ready().then(async () => {
             await this.storage.set(this.browseSettingsKey, res);
-            this.stored.next(true);
           });
         }
       })
     );
   }
 
-  areSettingsStored() {
-    return this.stored.asObservable();
-  }
 }

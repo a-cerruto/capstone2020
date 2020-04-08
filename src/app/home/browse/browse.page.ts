@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router} from '@angular/router';
 import { Storage } from '@ionic/storage';
 
 import { LoadingService } from '../../global/services/loading.service';
@@ -16,23 +16,25 @@ import {SettingsBrowse} from '../../settings/interfaces/settings-browse';
   templateUrl: './browse.page.html',
   styleUrls: ['./browse.page.scss'],
 })
-export class BrowsePage implements OnInit {
+export class BrowsePage implements OnInit, OnDestroy {
 
+  private routeSubscription: any;
+  private settingsSubscription: any;
   private userBrowseSettings: SettingsBrowse;
+  private sectionHeadings = ['Featured', 'New Releases'];
+  private channels: string[];
   private featuredResults: any;
-  private actionResults: any;
-  private comedyResults: any;
-  private horrorResults: any;
-  private movieResults: any;
+  private newResults: any;
+  private channelResults: any;
   private resultsLoaded: number;
+  private resultsNeeded: number;
   private backdrop: boolean;
   private slideOptions: any;
 
+  private readonly resultLimit = 25;
   private readonly featuredResultsKey = 'FEATURED_RESULTS';
-  private readonly actionResultsKey = 'ACTION_RESULTS';
-  private readonly comedyResultsKey = 'COMEDY_RESULTS';
-  private readonly horrorResultsKey = 'HORROR_RESULTS';
-  private readonly movieResultsKey = 'MOVIE_RESULTS';
+  private readonly newResultsKey = 'NEW_RESULTS';
+  private readonly channelResultKeyBase = 'CHANNEL_RESULTS_';
 
   constructor(
     private router: Router,
@@ -58,83 +60,101 @@ export class BrowsePage implements OnInit {
         900: {
           slidesPerView: 4
         },
-        1000: {
+        1100: {
           slidesPerView: 5
         },
-        1100: {
+        1200: {
           slidesPerView: 6
         },
-        1200: {
+        1300: {
           slidesPerView: 7
         },
-        1300: {
-          slidesPerView: 8
-        },
         1440: {
-          slidesPerView: 9
+          slidesPerView: 8
         }
       }
     };
   }
 
   ngOnInit() {
+    this.fetchData(true).then();
+  }
+
+  ngOnDestroy() {
+    if (this.settingsSubscription) {
+      this.settingsSubscription.unsubscribe();
+    }
+  }
+
+  async fetchData(checkStorage) {
     this.resultsLoaded = 0;
+    this.resultsNeeded = 2;
     this.backdrop = true;
     this.loading.getLoading('Getting new titles...').then(() => {
-      if (this.user.areSettingsStored()) {
-        this.userBrowseSettings = this.user.getBrowseSettings();
-        this.getListings().then();
-      } else {
-        this.user.areSettingsStored().subscribe(async stored => {
-          if (stored) {
-            this.userBrowseSettings = this.user.getBrowseSettings();
-            this.getListings().then();
-          }
-        });
-      }
+      if (this.userBrowseSettings) { this.getAllListings(checkStorage).then(); }
+      this.settingsSubscription = this.user.areSettingsStored().subscribe(stored => {
+        if (stored) {
+          this.getAllListings(true).then();
+        }
+      });
     });
   }
 
   slidesLoaded() {
     this.resultsLoaded += 1;
-    if (this.resultsLoaded === 5) {
+    if (this.resultsLoaded === this.resultsNeeded) {
       this.loading.dismiss().then(() => {
         this.backdrop = false;
       });
     }
   }
 
-  async getListings() {
-    await this.getShowsList(this.featuredResultsKey, '', (results) => {
-      this.featuredResults = results;
-    });
-    await this.getShowsList(this.actionResultsKey, 'action', (results) => {
-      this.actionResults = results;
-    });
-    await this.getShowsList(this.comedyResultsKey, 'comedy', (results) => {
-      this.comedyResults = results;
-    });
-    await this.getShowsList(this.horrorResultsKey, 'horror', (results) => {
-      this.horrorResults = results;
-    });
-    await this.getMovieList(this.movieResultsKey, (results) => {
-      this.movieResults = results;
-    });
+  async getAllListings(checkStorage: boolean) {
+    let result;
+    this.userBrowseSettings = this.user.getBrowseSettings();
+    this.channels = this.userBrowseSettings.channels.split(',');
+    this.resultsNeeded += this.channels.length;
+
+    this.featuredResults = await this.getFeaturedList(false, this.resultLimit, [], this.featuredResultsKey, checkStorage);
+
+    result = await this.getFeaturedList(true, this.resultLimit, [], this.newResultsKey, checkStorage);
+    this.newResults = result;
+
+    const results = [];
+    for (const channel of this.channels) {
+      result = await this.getShowsByChannel(channel, this.resultLimit, [], this.channelResultKeyBase + channel, checkStorage);
+      results.push(result);
+      this.sectionHeadings.push(channel);
+      if (results.length === this.channels.length) {
+        this.channelResults = results;
+      }
+    }
   }
 
-  async getShowsList(key, tags, callback) {
-    await this.storage.ready();
-    let results = await this.storage.get(key);
-    if (results) {
-      callback(results);
+  async getFeaturedList(newShowsOnly, limit, prevShows, storageKey, checkStorage) {
+    if (checkStorage) {
+      await this.storage.ready();
+      const results = await this.storage.get(storageKey);
+      return results ? results : await this.getFeaturedList(newShowsOnly, limit, prevShows, storageKey, false);
     } else {
-      this.server.getShows(this.userBrowseSettings, tags, key).subscribe({
-        next: async res => {
-          this.storage.ready().then(async () => {
-            results = await this.storage.get(key);
-            callback(results);
-          });
-        },
+      await this.server.getFeaturedShows(newShowsOnly, this.userBrowseSettings.sources, limit, prevShows, storageKey).subscribe({
+        next: res => res,
+        error: err => {
+          console.log(err);
+          this.toast.showError(err.status);
+        }
+      });
+    }
+  }
+
+  async getShowsByChannel(channel, limit, prevShows, storageKey, checkStorage) {
+    if (checkStorage) {
+      await this.storage.ready();
+      const results = await this.storage.get(storageKey);
+      return results ? results : this.getShowsByChannel(channel, limit, prevShows, storageKey, false);
+    } else {
+      this.server.getShowsByChannel(channel, limit, prevShows, storageKey).subscribe({
+        next: res => res,
         error: err => {
           console.log(err.status);
           this.toast.showError(err.status);
@@ -162,5 +182,10 @@ export class BrowsePage implements OnInit {
         }
       });
     }
+  }
+
+  async refreshData(ev) {
+    await this.fetchData(false);
+    ev.target.complete();
   }
 }

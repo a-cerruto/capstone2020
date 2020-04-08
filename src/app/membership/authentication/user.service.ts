@@ -25,7 +25,6 @@ export class UserService {
   private browseSettings: SettingsBrowse;
 
   private readonly userKey = 'USER';
-  private readonly browseSettingsKey = 'BROWSE_SETTINGS';
 
 
   constructor(
@@ -43,9 +42,6 @@ export class UserService {
          this.initDetails();
       }
     });
-    this.settings.areSettingsStored().subscribe(async stored => {
-      if (stored) { this.initSettings(); } else { this.settingsStored.next(false); }
-    });
   }
 
   login(form) {
@@ -54,7 +50,6 @@ export class UserService {
 
   async logout() {
     await this.loading.getLoading('Logging out...');
-    await this.storage.remove(this.browseSettingsKey);
     await this.authentication.logout();
     await this.loading.dismiss();
     await this.router.navigateByUrl('/login');
@@ -71,19 +66,24 @@ export class UserService {
       this.id = user.id;
       this.email = user.email;
       this.username = user.username;
-      console.log('user: ' + user);
+      console.log('user: ' + JSON.stringify(user));
       console.log('id: ' + this.id);
       console.log('email: ' + this.email);
       console.log('username: ' + this.username);
-      this.fetchSettings();
+      this.initSettings();
     });
   }
 
   initSettings() {
-    this.storage.ready().then(async () => {
-      this.browseSettings = await this.storage.get(this.browseSettingsKey);
-      this.settingsStored.next(true);
-      console.log(this.browseSettings);
+    this.settings.getBrowseSettings(this.id).subscribe({
+      next: (res: SettingsBrowse) => {
+        this.browseSettings = res;
+        this.settingsStored.next(true);
+      },
+      error: err => {
+        console.log(err.status);
+        this.toast.showError(err.status);
+      }
     });
   }
 
@@ -115,24 +115,22 @@ export class UserService {
     return this.settingsStored.asObservable();
   }
 
-  async fetchSettings() {
-    await this.settings.getBrowseSettings(this.id).subscribe({
-      next: res => {
-        console.log(res);
+  getBrowseSettings() {
+    return this.browseSettings;
+  }
+
+  setBrowseSettings(key, value) {
+    this.settings.updateBrowseSettings(this.id, key, value.toString()).subscribe({
+      next: (res: SettingsBrowse) => {
+        if (res) {
+          this.browseSettings = res;
+        }
       },
       error: err => {
         console.log(err.status);
         this.toast.showError(err.status);
       }
     });
-  }
-
-  getBrowseSettings() {
-    return this.browseSettings;
-  }
-
-  setBrowseSettings(key, value) {
-    return this.settings.updateBrowseSettings(this.id, key, value.toString());
   }
 
 }

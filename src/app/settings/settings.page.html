@@ -43,16 +43,16 @@
           <ion-item>
             <ion-label>Channels</ion-label>
             <ion-select (ionChange)="channelSelection($event.detail.value)" [placeholder]="userBrowseSettings.channelList">
-              <ion-select-option *ngFor="let option of channelList" [value]="option.value">{{ option.key }}</ion-select-option>
+              <ion-select-option *ngFor="let option of channelList" [value]="option.value">{{ option.title }}</ion-select-option>
             </ion-select>
           </ion-item>
 
-          <ion-item *ngIf="userBrowseSettings.channelList === 'custom'">
+          <ion-item *ngIf="showSourceOptions">
             <ion-label>
               <ion-icon slot="icon-only" name="tv"></ion-icon>
             </ion-label>
             <ion-select multiple="true" cancelText="Cancel" okText="Update!" (ionChange)="updateSettings('channels', $event.detail.value)" [placeholder]="userBrowseSettings.channels">
-              <ion-select-option *ngFor="let option of channelOptions" [value]="option">{{ option }}</ion-select-option>
+              <ion-select-option *ngFor="let option of channelOptions" [value]="option.value">{{ option.title }}</ion-select-option>
             </ion-select>
           </ion-item>
 
@@ -61,7 +61,7 @@
           <ion-item>
             <ion-label>Sources</ion-label>
             <ion-select multiple="true" cancelText="Cancel" okText="Update!" (ionChange)="updateSettings('sources', $event.detail.value)" [placeholder]="userBrowseSettings.sources">
-              <ion-select-option *ngFor="let option of sourceOptions" [value]="option">{{ option }}</ion-select-option>
+              <ion-select-option *ngFor="let option of sourceOptions" [value]="option.value">{{ option.title }}</ion-select-option>
             </ion-select>
           </ion-item>
 
@@ -70,7 +70,7 @@
           <ion-item>
             <ion-label>Platforms</ion-label>
             <ion-select multiple="true" cancelText="Cancel" okText="Update!" (ionChange)="updateSettings('platforms', $event.detail.value)" [placeholder]="userBrowseSettings.platforms">
-              <ion-select-option *ngFor="let option of platformOptions" [value]="option">{{ option }}</ion-select-option>
+              <ion-select-option *ngFor="let option of platformOptions" [value]="option.value">{{ option.title }}</ion-select-option>
             </ion-select>
           </ion-item>
 

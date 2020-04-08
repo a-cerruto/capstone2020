@@ -34,14 +34,26 @@ export class ServerService {
       this.serverPort;
   }
 
-  getShows(settings: SettingsBrowse, tags: string, storageKey): Observable<any> {
-    return this.http.post(this.serverAddress + 'shows', { settings, tags }).pipe(
+  getFeaturedShows(newShowsOnly: boolean, sources: string, limit: number, prevShows: number[], storageKey: string): Observable<any> {
+    const endpoint = newShowsOnly ? '/new' : '/featured';
+    return this.http.post(this.serverAddress + 'shows' + endpoint, { sources, limit, prevShows }).pipe(
       tap(async (res: any) => {
         console.log(res);
         if (res) {
-          this.storage.ready().then(async () => {
-            await this.storage.set(storageKey, res);
-          });
+          await this.storage.ready();
+          await this.storage.set(storageKey, res);
+        }
+      })
+    );
+  }
+
+  getShowsByChannel(channel: string, limit: number, prevShows: number[], storageKey): Observable<any> {
+    return this.http.post(this.serverAddress + 'shows/channel', { channel, limit, prevShows }).pipe(
+      tap(async (res: any) => {
+        console.log(res);
+        if (res) {
+          await this.storage.ready();
+          await this.storage.set(storageKey, res);
         }
       })
     );
