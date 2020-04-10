@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: SettingsPage
+  },
+  {
+    path: 'account',
+    loadChildren: () => import('../membership/account/account.module').then( m => m.AccountPageModule)
   }
 ];
 

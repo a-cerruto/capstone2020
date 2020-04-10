@@ -1,10 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Storage } from '@ionic/storage';
-import { FormGroup } from '@angular/forms';
 
 import { LoadingService } from '../global/services/loading.service';
 import { ToastService } from '../global/services/toast.service';
-import { FormService } from '../global/services/form.service';
 
 import { SettingsService } from './settings.service';
 import { UserService } from '../membership/authentication/user.service';
@@ -50,36 +48,13 @@ export class SettingsPage implements OnInit, OnDestroy {
   private storedSubscription: any;
   private userBrowseSettings: SettingsBrowse;
 
-  // Slide #2
-  private emailForm: FormGroup;
-  private usernameForm: FormGroup;
-  private passwordForm: FormGroup;
-  private validationMessages: any;
-  private edit: boolean;
-  private editEmail: boolean;
-  private editUsername: boolean;
-  private editPassword: boolean;
-  private buttonPressed: boolean;
-
   constructor(
     private storage: Storage,
     private loading: LoadingService,
     private toast: ToastService,
     private settings: SettingsService,
     private user: UserService
-  ) {
-    // Slide #1
-    // Slide #2
-    this.emailForm = FormService.emailForm();
-    this.usernameForm = FormService.usernameForm();
-    this.passwordForm = FormService.passwordForm();
-    this.validationMessages = FormService.validationMessages();
-    this.edit = false;
-    this.editEmail = false;
-    this.editUsername = false;
-    this.editPassword = false;
-    this.buttonPressed = false;
-  }
+  ) {}
 
 
   ngOnInit() {
@@ -122,8 +97,6 @@ export class SettingsPage implements OnInit, OnDestroy {
       this.storedSubscription.unsubscribe();
     }
   }
-
-  // Slide #1
 
   async refreshSettings(event) {
     await this.user.initSettings();
@@ -183,87 +156,6 @@ export class SettingsPage implements OnInit, OnDestroy {
   }
 
   // Slide #2
-  toggleEdit() {
-    if (this.edit) { this.resetButtons(); } else { this.edit = true; }
-  }
 
-  canEditEmail() {
-    this.editEmail = !this.editEmail;
-  }
-
-  canEditUsername() {
-    this.editUsername = !this.editUsername;
-  }
-
-  canEditPassword() {
-    this.editPassword = !this.editPassword;
-  }
-
-  resetButtons() {
-    this.edit = this.editEmail = this.editUsername = this.editPassword = this.buttonPressed = false;
-  }
-
-  async updateEmail(form) {
-    this.buttonPressed = true;
-    await this.loading.getLoading('Updating Email...');
-    this.user.setEmail(form.value).subscribe( {
-      next: async res => {
-        console.log(res);
-        this.loading.dismiss().then(() => {
-          this.toast.showSuccess('Email has been updated to ' + res.email);
-          this.resetButtons();
-        });
-      },
-      error: async err => {
-        console.log(err.status);
-        this.loading.dismiss().then(() => {
-          this.toast.showError(err.status);
-          this.buttonPressed = false;
-        });
-      }
-    });
-  }
-
-  async updateUsername(form) {
-    this.buttonPressed = true;
-    await this.loading.getLoading('Updating Username...');
-    this.user.setUsername(form.value).subscribe({
-      next: async res => {
-        console.log(res);
-        this.loading.dismiss().then(() => {
-          this.toast.showSuccess('Username has been updated to ' + res.username);
-          this.resetButtons();
-        });
-      },
-      error: async err => {
-        console.log(err.status);
-        this.loading.dismiss().then(() => {
-          this.toast.showError(err.status);
-          this.buttonPressed = false;
-        });
-      }
-    });
-  }
-
-  async updatePassword(form) {
-    this.buttonPressed = true;
-    await this.loading.getLoading('Updating Password');
-    this.user.setPassword(form.value).subscribe({
-      next: async res => {
-        console.log(res);
-        this.loading.dismiss().then(() => {
-          this.toast.showSuccess('Password has been successfully updated!');
-          this.resetButtons();
-        });
-      },
-      error: async err => {
-        console.log(err.status);
-        this.loading.dismiss().then(() => {
-          this.toast.showError(err.status);
-          this.buttonPressed = false;
-        });
-      }
-    });
-  }
 
 }
