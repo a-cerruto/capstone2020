@@ -20,12 +20,12 @@
   <ion-list>
 
     <ion-list-header>
-      <ion-label>Shows</ion-label>
+      <h3>Shows</h3>
     </ion-list-header>
 
     <div *ngIf="featuredResults">
       <ion-item-divider>
-        <ion-label>{{ this.sectionHeadings[0] }}</ion-label>
+        <ion-label>Featured</ion-label>
       </ion-item-divider>
       <ion-item lines="none">
         <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()">
@@ -40,7 +40,7 @@
 
     <div *ngIf="newResults">
       <ion-item-divider>
-        <ion-label>{{ this.sectionHeadings[1] }}</ion-label>
+        <ion-label>New Releases</ion-label>
       </ion-item-divider>
       <ion-item lines="none">
         <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()">
@@ -56,7 +56,7 @@
     <div *ngIf="channelResults">
       <div *ngFor="let channel of channelResults; let i = index">
         <ion-item-divider>
-          <ion-label>{{ this.sectionHeadings[i + 2] }}</ion-label>
+          <ion-label>{{ sectionHeadings[i] }}</ion-label>
         </ion-item-divider>
         <ion-item lines="none">
           <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()">

@@ -10,6 +10,7 @@ import { SettingsService } from './settings.service';
 import { UserService } from '../membership/authentication/user.service';
 
 import { SettingsBrowse } from './interfaces/settings-browse';
+import { Option } from './interfaces/option';
 
 @Component({
   selector: 'app-settings',
@@ -20,21 +21,18 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   // Slide #1
   private slideOptions = {
-    slidesPerView: 2,
-    spaceBetween: 0,
-    breakpoints: {
-      750: {
-        slidesPerView: 1
-      }
-    }
+    slidesPerView: 1,
+    spaceBetween: 1000,
+    allowSlidePrev: false,
+    allowSlideNext: false
   };
-  private channelList = [
+  private channelListOptions = [
     {
       title: 'All',
       value: 'all',
     },
     {
-      title: 'Subscriptions Only',
+      title: 'My Subscriptions',
       value: 'subscription'
     },
     {
@@ -42,11 +40,13 @@ export class SettingsPage implements OnInit, OnDestroy {
       value: 'custom'
     }
   ];
-  private showSourceOptions: boolean;
 
   private channelOptions: any;
   private sourceOptions: any;
   private platformOptions: any;
+  private channels: Option[];
+  private sources: Option[];
+  private platforms: Option[];
   private storedSubscription: any;
   private userBrowseSettings: SettingsBrowse;
 
@@ -84,7 +84,7 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loading.getLoading().then(() => {
-      this.settings.getOptions().subscribe({
+      this.settings.getAvailableOptions().subscribe({
         next: res => {
           console.log(res);
           if (res) {
@@ -100,8 +100,17 @@ export class SettingsPage implements OnInit, OnDestroy {
       });
       this.storedSubscription = this.user.areSettingsStored().subscribe(async stored => {
         if (stored) {
+          this.channels = [];
+          this.sources = [];
+          this.platforms = [];
           this.userBrowseSettings = this.user.getBrowseSettings();
-          this.showSourceOptions = this.userBrowseSettings.channelList === this.channelList[2].value;
+          this.userBrowseSettings.options.forEach((option: Option) => {
+            switch (option.type) {
+              case 'channel': this.channels.push(option); break;
+              case 'source': this.sources.push(option); break;
+              case 'platform': this.platforms.push(option); break;
+            }
+          });
           this.loading.dismiss().then();
         }
       });
@@ -116,40 +125,61 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   // Slide #1
 
-  updateSettings(key, value) {
-    this.user.setBrowseSettings(key, value.toString());
-  }
-
   async refreshSettings(event) {
     await this.user.initSettings();
     event.target.complete();
   }
 
-  channelSelection(listType) {
+  selectChannels(listType) {
     switch (listType) {
-      case this.channelList[0].value:
-        this.updateSettings('channelList', this.channelList[0].value);
-        this.showSourceOptions = false;
-        let value = '';
-        let i = 1;
-        this.channelOptions.forEach(channel => {
-          value += channel.value;
-          if (i !== this.channelOptions.length) {
-            value += ',';
-          }
-          i++;
-        });
-        this.updateSettings('channels', value);
-        this.showSourceOptions = false;
+      case this.channelListOptions[0].value:
+        this.updateSettings('channelList', this.channelListOptions[0].value);
+        this.updateOptions('channel', this.channelOptions);
         break;
-      case this.channelList[1].value:
-        this.updateSettings('channelList', 'subscriptions');
+      case this.channelListOptions[1].value:
+        this.updateSettings('channelList', this.channelListOptions[1].value);
         break;
-      case this.channelList[2].value:
-        this.updateSettings('channelList', 'custom');
-        this.showSourceOptions = true;
+      case this.channelListOptions[2].value:
+        this.updateSettings('channelList', this.channelListOptions[2].value);
         break;
     }
+  }
+
+  checkForAlreadySelected(alreadySelected, value) {
+    return alreadySelected.indexOf(value) !== -1;
+  }
+
+  updateSettings(key, value) {
+    this.user.setBrowseSettings(key, value.toString());
+  }
+
+  updateOptions(type, options) {
+    this.user.setOptionsSettings(type, options);
+  }
+
+  updateList(addToList, type, options) {
+    let currentOptions;
+    switch (type) {
+      case 'channel':
+        currentOptions = this.channels;
+        break;
+      case 'source':
+        currentOptions = this.sources;
+        break;
+      case 'platform':
+        currentOptions = this.platforms;
+        break;
+    }
+    let index;
+    if (addToList) {
+      options.forEach(channel => {
+        currentOptions.push(channel);
+      });
+    } else {
+      index = currentOptions.indexOf(options);
+      currentOptions.splice(index, 1);
+    }
+    this.updateOptions(type, currentOptions);
   }
 
   // Slide #2

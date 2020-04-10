@@ -8,7 +8,8 @@ import { ToastService } from '../../global/services/toast.service';
 import { UserService } from '../../membership/authentication/user.service';
 import { ServerService } from './server.service';
 
-import {SettingsBrowse} from '../../settings/interfaces/settings-browse';
+import { Option } from '../../settings/interfaces/option';
+import { SettingsBrowse } from '../../settings/interfaces/settings-browse';
 
 
 @Component({
@@ -18,14 +19,14 @@ import {SettingsBrowse} from '../../settings/interfaces/settings-browse';
 })
 export class BrowsePage implements OnInit, OnDestroy {
 
-  private routeSubscription: any;
   private settingsSubscription: any;
   private userBrowseSettings: SettingsBrowse;
-  private sectionHeadings = ['Featured', 'New Releases'];
-  private channels: string[];
+  private channels: Option[];
+  private sources: string[];
   private featuredResults: any;
   private newResults: any;
   private channelResults: any;
+  private sectionHeadings: string[];
   private resultsLoaded: number;
   private resultsNeeded: number;
   private backdrop: boolean;
@@ -87,13 +88,12 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   async fetchData(checkStorage) {
-    this.resultsLoaded = 0;
-    this.resultsNeeded = 2;
     this.backdrop = true;
     this.loading.getLoading('Getting new titles...').then(() => {
       if (this.userBrowseSettings) { this.getAllListings(checkStorage).then(); }
       this.settingsSubscription = this.user.areSettingsStored().subscribe(stored => {
         if (stored) {
+          this.userBrowseSettings = this.user.getBrowseSettings();
           this.getAllListings(true).then();
         }
       });
@@ -110,10 +110,22 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   async getAllListings(checkStorage: boolean) {
+    this.channels = [];
+    this.sources = [];
+    this.resultsLoaded = 0;
+    this.resultsNeeded = 2;
+    this.sectionHeadings = [];
     let result;
-    this.userBrowseSettings = this.user.getBrowseSettings();
-    this.channels = this.userBrowseSettings.channels.split(',');
-    this.resultsNeeded += this.channels.length;
+    this.userBrowseSettings.options.forEach(option => {
+      switch (option.type) {
+        case 'channel':
+          this.channels.push(option);
+          this.sectionHeadings.push(option.title);
+          break;
+        case 'source':
+          this.sources.push(option.value);
+      }
+    });
 
     this.featuredResults = await this.getFeaturedList(false, this.resultLimit, [], this.featuredResultsKey, checkStorage);
 
@@ -122,9 +134,9 @@ export class BrowsePage implements OnInit, OnDestroy {
 
     const results = [];
     for (const channel of this.channels) {
-      result = await this.getShowsByChannel(channel, this.resultLimit, [], this.channelResultKeyBase + channel, checkStorage);
+      result = await this.getShowsByChannel(channel.value, this.resultLimit, [], this.channelResultKeyBase + channel.value, checkStorage);
       results.push(result);
-      this.sectionHeadings.push(channel);
+      this.resultsNeeded += 1;
       if (results.length === this.channels.length) {
         this.channelResults = results;
       }
@@ -137,7 +149,7 @@ export class BrowsePage implements OnInit, OnDestroy {
       const results = await this.storage.get(storageKey);
       return results ? results : await this.getFeaturedList(newShowsOnly, limit, prevShows, storageKey, false);
     } else {
-      await this.server.getFeaturedShows(newShowsOnly, this.userBrowseSettings.sources, limit, prevShows, storageKey).subscribe({
+      await this.server.getFeaturedShows(newShowsOnly, this.sources, limit, prevShows, storageKey).subscribe({
         next: res => res,
         error: err => {
           console.log(err);

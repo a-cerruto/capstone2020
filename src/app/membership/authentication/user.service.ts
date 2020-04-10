@@ -77,12 +77,10 @@ export class UserService {
   initSettings() {
     this.settings.getBrowseSettings(this.id).subscribe({
       next: (res: SettingsBrowse) => {
-        this.browseSettings = res;
-        this.settingsStored.next(true);
+        this.storeSettings(res);
       },
       error: err => {
-        console.log(err.status);
-        this.toast.showError(err.status);
+        this.handleError(err);
       }
     });
   }
@@ -119,18 +117,37 @@ export class UserService {
     return this.browseSettings;
   }
 
+  storeSettings(settings) {
+    console.log(settings);
+    this.browseSettings = settings;
+    this.settingsStored.next(true);
+  }
+
   setBrowseSettings(key, value) {
-    this.settings.updateBrowseSettings(this.id, key, value.toString()).subscribe({
+    return this.settings.updateBrowseSettings(this.id, key, value.toString()).subscribe({
       next: (res: SettingsBrowse) => {
-        if (res) {
-          this.browseSettings = res;
-        }
+        this.storeSettings(res);
       },
       error: err => {
-        console.log(err.status);
-        this.toast.showError(err.status);
+        this.handleError(err);
       }
     });
+  }
+
+  setOptionsSettings(type, options) {
+    return this.settings.updateOptionsSettings(this.id, type, options).subscribe( {
+      next: (res: SettingsBrowse) => {
+        this.storeSettings(res);
+      },
+      error: err => {
+        this.handleError(err);
+      }
+    });
+  }
+
+  handleError(error) {
+    console.log(error.status);
+    this.toast.showError(error.status);
   }
 
 }

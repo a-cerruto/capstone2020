@@ -35,8 +35,14 @@ export class SettingsService {
     this.browseSettingsKey = 'BROWSE_SETTINGS';
   }
 
+  async storeSettings(settings) {
+    console.log(settings);
+    await this.storage.ready();
+    await this.storage.set(this.browseSettingsKey, settings);
+  }
+
   getBrowseSettings(userId: number): Observable<SettingsBrowse> {
-    return this.http.post<SettingsBrowse>(this.serverAddress + '/browse', { userId }).pipe(
+    return this.http.post<SettingsBrowse>(this.serverAddress + '/', { userId }).pipe(
       tap(async (res: SettingsBrowse) => {
         if (res) {
           this.storage.ready().then(async () => {
@@ -47,17 +53,25 @@ export class SettingsService {
     );
   }
 
-  getOptions(): Observable<any> {
+  getAvailableOptions(): Observable<any> {
     return this.http.post<any>(this.serverAddress + '/available', {});
   }
 
   updateBrowseSettings(userId: number, key: string, value: string): Observable<SettingsBrowse> {
-    return this.http.post<SettingsBrowse>(this.serverAddress + '/update', { userId, key, value }).pipe(
+    return this.http.post<SettingsBrowse>(this.serverAddress + '/browse', { userId, key, value }).pipe(
       tap(async (res: SettingsBrowse) => {
         if (res) {
-          this.storage.ready().then(async () => {
-            await this.storage.set(this.browseSettingsKey, res);
-          });
+          await this.storeSettings(res);
+        }
+      })
+    );
+  }
+
+  updateOptionsSettings(userId: number, type: string, options: any[]): Observable<SettingsBrowse> {
+    return this.http.post<SettingsBrowse>(this.serverAddress + '/options', { userId, type, options }).pipe(
+      tap(async (res: SettingsBrowse) => {
+        if (res) {
+          await this.storeSettings(res);
         }
       })
     );

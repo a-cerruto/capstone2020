@@ -33,7 +33,7 @@ export class SubscriptionsPage implements OnInit {
   configureSubs(): void {
     // get the list of subs from the backend database
     this.subscriptionDB.currentSubs(this.user.getId()).toPromise().then(data => {
-      this.subscriptions = data.subscriptions;
+      this.subscriptions = data['subscriptions'];
       // Remove all providers that a user has a subscription to from providers list
       for (const subscription of this.subscriptions) {
         const index = this.providers.indexOf(subscription);

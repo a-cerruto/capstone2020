@@ -34,7 +34,7 @@ export class ServerService {
       this.serverPort;
   }
 
-  getFeaturedShows(newShowsOnly: boolean, sources: string, limit: number, prevShows: number[], storageKey: string): Observable<any> {
+  getFeaturedShows(newShowsOnly: boolean, sources: string[], limit: number, prevShows: number[], storageKey: string): Observable<any> {
     const endpoint = newShowsOnly ? '/new' : '/featured';
     return this.http.post(this.serverAddress + 'shows' + endpoint, { sources, limit, prevShows }).pipe(
       tap(async (res: any) => {
