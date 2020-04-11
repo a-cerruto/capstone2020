@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { Storage } from '@ionic/storage';
 
-import { ServerService } from '../server.service';
+import { ServerService } from '../../services/server.service';
 import { UserService } from '../../../membership/authentication/user.service';
 
 @Component({
@@ -30,6 +30,7 @@ export class ShowPage implements OnInit {
     private server: ServerService,
     private user: UserService
   ) {
+    this.showId = this.activatedRoute.snapshot.paramMap.get('showId');
     this.season = 1;
     this.backdrop = true;
     this.slideOptions = {
@@ -45,7 +46,6 @@ export class ShowPage implements OnInit {
   }
 
   ngOnInit() {
-    this.showId = this.activatedRoute.snapshot.paramMap.get('showId');
     this.server.getShowDetails(this.showId).subscribe({
       next: async res => {
         let details;

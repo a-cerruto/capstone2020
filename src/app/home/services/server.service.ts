@@ -34,9 +34,10 @@ export class ServerService {
       this.serverPort;
   }
 
-  getFeaturedShows(newShowsOnly: boolean, sources: string[], limit: number, prevShows: number[], storageKey: string): Observable<any> {
-    const endpoint = newShowsOnly ? '/new' : '/featured';
-    return this.http.post(this.serverAddress + 'shows' + endpoint, { sources, limit, prevShows }).pipe(
+  getFeaturedResults(endpoint: string, newOnly: boolean, sources: string[],
+                     limit: number, prevResults: number[], storageKey: string): Observable<any> {
+    endpoint += newOnly ? '/new' : '/featured';
+    return this.http.post(this.serverAddress + endpoint, { sources, limit, prevResults }).pipe(
       tap(async (res: any) => {
         console.log(res);
         if (res) {
@@ -47,8 +48,8 @@ export class ServerService {
     );
   }
 
-  getShowsByChannel(channel: string, limit: number, prevShows: number[], storageKey): Observable<any> {
-    return this.http.post(this.serverAddress + 'shows/channel', { channel, limit, prevShows }).pipe(
+  getResultsByChannel(endpoint: string, channel: string, limit: number, prevResults: number[], storageKey): Observable<any> {
+    return this.http.post(this.serverAddress + endpoint + '/channel', { channel, limit, prevResults }).pipe(
       tap(async (res: any) => {
         console.log(res);
         if (res) {

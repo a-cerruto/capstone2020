@@ -118,8 +118,12 @@ export class SettingsPage implements OnInit, OnDestroy {
     }
   }
 
-  checkForAlreadySelected(alreadySelected, value) {
-    return alreadySelected.indexOf(value) !== -1;
+  checkForAlreadySelected(alreadySelected, option) {
+    const values = [];
+    alreadySelected.forEach(selected => {
+      values.push(selected.value);
+    });
+    return values.indexOf(option.value) !== -1;
   }
 
   updateSettings(key, value) {

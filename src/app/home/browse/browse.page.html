@@ -3,7 +3,7 @@
     <ion-buttons slot="end">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Browse</ion-title>
+    <ion-title>{{ title }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -19,50 +19,17 @@
 
   <ion-list>
 
-    <ion-list-header>
-      <h3>Shows</h3>
-    </ion-list-header>
-
-    <div *ngIf="featuredResults">
-      <ion-item-divider>
-        <ion-label>Featured</ion-label>
-      </ion-item-divider>
-      <ion-item lines="none">
-        <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()">
-          <ion-slide *ngFor="let result of featuredResults">
-            <ion-item detail="false" lines="none" button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/show/' + result.id">
-              <img style="border-radius: 4px;" src="{{ result.artwork_304x171 }}"/>
-            </ion-item>
-          </ion-slide>
-        </ion-slides>
-      </ion-item>
-    </div>
-
-    <div *ngIf="newResults">
-      <ion-item-divider>
-        <ion-label>New Releases</ion-label>
-      </ion-item-divider>
-      <ion-item lines="none">
-        <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()">
-          <ion-slide *ngFor="let result of newResults">
-            <ion-item detail="false" lines="none" button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/show/' + result.id">
-              <img style="border-radius: 4px;" src="{{ result.artwork_304x171 }}">
-            </ion-item>
-          </ion-slide>
-        </ion-slides>
-      </ion-item>
-    </div>
-
-    <div *ngIf="channelResults">
-      <div *ngFor="let channel of channelResults; let i = index">
-        <ion-item-divider>
+    <div *ngIf="results">
+      <div *ngFor="let section of results; let i = index">
+        <ion-item-divider mode="md">
           <ion-label>{{ sectionHeadings[i] }}</ion-label>
         </ion-item-divider>
         <ion-item lines="none">
           <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()">
-            <ion-slide *ngFor="let result of channel">
+            <ion-slide *ngFor="let result of section">
               <ion-item detail="false" lines="none" button="true" [routerDirection]="'forward'" [routerLink]="'/home/browse/show/' + result.id">
-                <img style="border-radius: 4px;" src="{{ result.artwork_304x171 }}">
+                <img *ngIf="result.artwork_304x171" style="border-radius: 4px;" src="{{ result.artwork_304x171 }}" alt="{{ result.title }}"/>
+                <img *ngIf="result.poster_240x342" style="border-radius: 4px;" src="{{ result.poster_240x342 }}" alt="{{ result.title }}"/>
               </ion-item>
             </ion-slide>
           </ion-slides>
@@ -70,6 +37,5 @@
       </div>
     </div>
 
-    <ion-item-divider></ion-item-divider>
   </ion-list>
 </ion-content>

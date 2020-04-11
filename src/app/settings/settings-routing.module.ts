@@ -10,7 +10,7 @@ const routes: Routes = [
   },
   {
     path: 'account',
-    loadChildren: () => import('../membership/account/account.module').then( m => m.AccountPageModule)
+    loadChildren: () => import('../membership/account/account.module').then(m => m.AccountPageModule)
   }
 ];
 

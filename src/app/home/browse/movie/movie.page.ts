@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { Storage } from '@ionic/storage';
 
-import { ServerService } from '../server.service';
+import { ServerService } from '../../services/server.service';
 import { UserService } from '../../../membership/authentication/user.service';
 
 @Component({

@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
 
 import { LoadingService } from '../../global/services/loading.service';
 import { ToastService } from '../../global/services/toast.service';
 
 import { UserService } from '../../membership/authentication/user.service';
-import { ServerService } from './server.service';
+import { ServerService } from '../services/server.service';
 
 import { Option } from '../../settings/interfaces/option';
 import { SettingsBrowse } from '../../settings/interfaces/settings-browse';
@@ -19,25 +19,27 @@ import { SettingsBrowse } from '../../settings/interfaces/settings-browse';
 })
 export class BrowsePage implements OnInit, OnDestroy {
 
+  private readonly type: string;
+  private title: string;
   private settingsSubscription: any;
   private userBrowseSettings: SettingsBrowse;
   private channels: Option[];
   private sources: string[];
-  private featuredResults: any;
-  private newResults: any;
-  private channelResults: any;
+  private results: any[];
   private sectionHeadings: string[];
   private resultsLoaded: number;
   private resultsNeeded: number;
   private backdrop: boolean;
   private slideOptions: any;
 
-  private readonly resultLimit = 25;
-  private readonly featuredResultsKey = 'FEATURED_RESULTS';
-  private readonly newResultsKey = 'NEW_RESULTS';
-  private readonly channelResultKeyBase = 'CHANNEL_RESULTS_';
+  private readonly defaultSections = ['Featured', 'New Releases'];
+  private readonly resultLimit = 10;
+  private readonly featuredResultsKey = 'FEATURED_';
+  private readonly newResultsKey = 'NEW_';
+  private readonly channelResultsBaseKey = 'CHANNEL_';
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private router: Router,
     private storage: Storage,
     private loading: LoadingService,
@@ -45,33 +47,41 @@ export class BrowsePage implements OnInit, OnDestroy {
     private user: UserService,
     private server: ServerService
   ) {
+    this.type = this.activatedRoute.snapshot.paramMap.get('type');
+    this.featuredResultsKey += this.type.toUpperCase();
+    this.newResultsKey += this.type.toUpperCase();
+    this.channelResultsBaseKey += this.type.toUpperCase() + '_';
+    this.title = this.type.charAt(0).toUpperCase() + this.type.substring(1);
     this.slideOptions = {
       spaceBetween: 0,
       slidesPerView: 10,
       breakpoints: {
-        320: {
+        330: {
           slidesPerView: 1
         },
-        450: {
+        470: {
           slidesPerView: 2
         },
         650: {
           slidesPerView: 3
         },
-        900: {
+        850: {
           slidesPerView: 4
         },
         1100: {
           slidesPerView: 5
         },
-        1200: {
+        1300: {
           slidesPerView: 6
         },
-        1300: {
+        1500: {
           slidesPerView: 7
         },
-        1440: {
+        1700: {
           slidesPerView: 8
+        },
+        1900: {
+          slidesPerView: 9
         }
       }
     };
@@ -110,12 +120,12 @@ export class BrowsePage implements OnInit, OnDestroy {
   }
 
   async getAllListings(checkStorage: boolean) {
+    this.results = [];
     this.channels = [];
     this.sources = [];
     this.resultsLoaded = 0;
     this.resultsNeeded = 2;
-    this.sectionHeadings = [];
-    let result;
+    this.sectionHeadings = [...this.defaultSections];
     this.userBrowseSettings.options.forEach(option => {
       switch (option.type) {
         case 'channel':
@@ -126,30 +136,47 @@ export class BrowsePage implements OnInit, OnDestroy {
           this.sources.push(option.value);
       }
     });
-
-    this.featuredResults = await this.getFeaturedList(false, this.resultLimit, [], this.featuredResultsKey, checkStorage);
-
-    result = await this.getFeaturedList(true, this.resultLimit, [], this.newResultsKey, checkStorage);
-    this.newResults = result;
-
-    const results = [];
+    this.results.push(
+      await this.getFeaturedResults(
+        this.type,
+        false,
+        this.sources,
+        this.resultLimit,
+        [],
+        this.featuredResultsKey,
+        checkStorage)
+    );
+    this.results.push(
+      await this.getFeaturedResults(
+        this.type,
+        true,
+        this.sources,
+        this.resultLimit,
+        [],
+        this.newResultsKey,
+        checkStorage)
+    );
     for (const channel of this.channels) {
-      result = await this.getShowsByChannel(channel.value, this.resultLimit, [], this.channelResultKeyBase + channel.value, checkStorage);
-      results.push(result);
+      this.results.push(
+        await this.getResultsByChannel(
+          this.type,
+          channel.value,
+          this.resultLimit,
+          [],
+          this.channelResultsBaseKey + channel.value,
+          checkStorage)
+      );
       this.resultsNeeded += 1;
-      if (results.length === this.channels.length) {
-        this.channelResults = results;
-      }
     }
   }
 
-  async getFeaturedList(newShowsOnly, limit, prevShows, storageKey, checkStorage) {
+  async getFeaturedResults(type, newOnly, sources, limit, prevResults, storageKey, checkStorage) {
     if (checkStorage) {
       await this.storage.ready();
       const results = await this.storage.get(storageKey);
-      return results ? results : await this.getFeaturedList(newShowsOnly, limit, prevShows, storageKey, false);
+      return results ? results : await this.getFeaturedResults(type, newOnly, sources, limit, prevResults, storageKey, false);
     } else {
-      await this.server.getFeaturedShows(newShowsOnly, this.sources, limit, prevShows, storageKey).subscribe({
+      await this.server.getFeaturedResults(type, newOnly, sources, limit, prevResults, storageKey).subscribe({
         next: res => res,
         error: err => {
           console.log(err);
@@ -159,35 +186,14 @@ export class BrowsePage implements OnInit, OnDestroy {
     }
   }
 
-  async getShowsByChannel(channel, limit, prevShows, storageKey, checkStorage) {
+  async getResultsByChannel(type, channel, limit, prevShows, storageKey, checkStorage) {
     if (checkStorage) {
       await this.storage.ready();
       const results = await this.storage.get(storageKey);
-      return results ? results : this.getShowsByChannel(channel, limit, prevShows, storageKey, false);
+      return results ? results : this.getResultsByChannel(type, channel, limit, prevShows, storageKey, false);
     } else {
-      this.server.getShowsByChannel(channel, limit, prevShows, storageKey).subscribe({
+      this.server.getResultsByChannel(type, channel, limit, prevShows, storageKey).subscribe({
         next: res => res,
-        error: err => {
-          console.log(err.status);
-          this.toast.showError(err.status);
-        }
-      });
-    }
-  }
-
-  async getMovieList(key, callback) {
-    await this.storage.ready();
-    let results = await this.storage.get(key);
-    if (results) {
-      callback(results);
-    } else {
-      this.server.getMovies(this.userBrowseSettings, key).subscribe({
-        next: async res => {
-          this.storage.ready().then(async () => {
-            results = await this.storage.get(key);
-            callback(results);
-          });
-        },
         error: err => {
           console.log(err.status);
           this.toast.showError(err.status);
