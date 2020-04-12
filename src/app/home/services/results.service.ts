@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
-
 import { Storage } from '@ionic/storage';
-
 import { ToastService } from '../../global/services/toast.service';
-
 import { ServerService } from './server.service';
 
 @Injectable({
@@ -25,7 +22,7 @@ export class ResultsService {
       return results ? results : await this.featured(type, newOnly, sources, limit, prevResults, storageKey, false);
     } else {
       await this.server.getFeaturedResults(type, newOnly, sources, limit, prevResults, storageKey).subscribe({
-        next: res => res,
+         next: async res => res,
         error: err => {
           console.log(err);
           this.toast.showError(err.status);
@@ -38,10 +35,10 @@ export class ResultsService {
     if (checkStorage) {
       await this.storage.ready();
       const results = await this.storage.get(storageKey);
-      return results ? results : this.byChannel(type, channel, limit, prevShows, storageKey, false);
+      return results ? results : await this.byChannel(type, channel, limit, prevShows, storageKey, false);
     } else {
       this.server.getResultsByChannel(type, channel, limit, prevShows, storageKey).subscribe({
-        next: res => res,
+        next: async res => res,
         error: err => {
           console.log(err.status);
           this.toast.showError(err.status);

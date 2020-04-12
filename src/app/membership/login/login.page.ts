@@ -44,7 +44,7 @@ export class LoginPage implements OnInit, OnDestroy {
     } else {
       this.loadingService.getLoading().then(() => {
         this.authentication.checkStorage().then((loggedIn) => {
-          loggedIn ? this.router.navigateByUrl('').then(() => { console.log('#4.5'); }) : this.backdrop = false;
+          loggedIn ? this.router.navigateByUrl('') : this.backdrop = false;
           this.loadingService.dismiss().then();
         });
       });

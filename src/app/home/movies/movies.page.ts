@@ -81,11 +81,11 @@ export class MoviesPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.backdrop = true;
     this.loading.getLoading('Updating Movies...').then();
-    if (this.userBrowseSettings) { this.getAllListings(true).then(); }
+    if (this.userBrowseSettings) { this.fetchListings(true).then(); }
     this.settingsSubscription = this.user.areSettingsStored().subscribe(stored => {
       if (stored) {
         this.userBrowseSettings = this.user.getBrowseSettings();
-        this.getAllListings(true).then();
+        this.fetchListings(true).then();
       }
     });
   }
@@ -105,7 +105,7 @@ export class MoviesPage implements OnInit, OnDestroy {
     }
   }
 
-  async getAllListings(checkStorage: boolean) {
+  async fetchListings(checkStorage: boolean) {
     this.results = [];
     this.channels = [];
     this.sources = [];
@@ -134,5 +134,8 @@ export class MoviesPage implements OnInit, OnDestroy {
         await this.resultsService.byChannel(this.type, channel.value, this.resultLimit, [], this.channelResultsBaseKey + channel.value, checkStorage)
       );
     }
+  }
+
+  fetchNextResults(index) {
   }
 }

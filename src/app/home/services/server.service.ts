@@ -34,8 +34,8 @@ export class ServerService {
       this.serverPort;
   }
 
-  getFeaturedResults(endpoint: string, newOnly: boolean, sources: string[],
-                     limit: number, prevResults: number[], storageKey: string): Observable<any> {
+  // tslint:disable-next-line:max-line-length
+  getFeaturedResults(endpoint: string, newOnly: boolean, sources: string[], limit: number, prevResults: number[], storageKey: string): Observable<any> {
     endpoint += newOnly ? '/new' : '/featured';
     return this.http.post(this.serverAddress + endpoint, { sources, limit, prevResults }).pipe(
       tap(async (res: any) => {
