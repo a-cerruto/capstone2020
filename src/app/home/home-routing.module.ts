@@ -26,11 +26,11 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'list',
+        path: 'portal',
         children: [
           {
             path: '',
-            loadChildren: () => import('./list/list.module').then( m => m.ListPageModule)
+            loadChildren: () => import('./portal/portal.module').then( m => m.PortalPageModule)
           }
         ]
       },
@@ -54,10 +54,6 @@ const routes: Routes = [
     path: '',
     redirectTo: '/home/shows',
     pathMatch: 'full'
-  },
-  {
-    path: 'portal',
-    loadChildren: () => import('./portal/portal.module').then( m => m.PortalPageModule)
   }
 ];
 
