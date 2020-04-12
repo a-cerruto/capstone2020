@@ -109,8 +109,8 @@ export class ShowsPage implements OnInit, OnDestroy {
     this.results = [];
     this.channels = [];
     this.sources = [];
-    this.resultsNeeded = 2;
     this.sectionHeadings = [...this.defaultSections];
+    this.resultsNeeded = 2;
     await this.userBrowseSettings.options.forEach(option => {
       switch (option.type) {
         case 'channel':

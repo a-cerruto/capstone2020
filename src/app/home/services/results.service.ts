@@ -22,7 +22,7 @@ export class ResultsService {
       return results ? results : await this.featured(type, newOnly, sources, limit, prevResults, storageKey, false);
     } else {
       await this.server.getFeaturedResults(type, newOnly, sources, limit, prevResults, storageKey).subscribe({
-         next: async res => res,
+        next: async res => res,
         error: err => {
           console.log(err);
           this.toast.showError(err.status);
