@@ -54,6 +54,10 @@ const routes: Routes = [
     path: '',
     redirectTo: '/home/shows',
     pathMatch: 'full'
+  },
+  {
+    path: 'portal',
+    loadChildren: () => import('./portal/portal.module').then( m => m.PortalPageModule)
   }
 ];
 
