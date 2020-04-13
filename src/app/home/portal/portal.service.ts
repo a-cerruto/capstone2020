@@ -68,7 +68,6 @@ export class PortalService {
   }
 
   async addView(userId, type, id, title, image) {
-    console.log('addView()');
     await this.postView(userId, type, id, title, image).subscribe({
       next: async res => res,
       error: err => console.log(err)
@@ -76,7 +75,6 @@ export class PortalService {
   }
 
   postView(userId, type, id, title, image) {
-    console.log('postView()');
     return this.http.post(this.serverAddress + '/views/add', { userId, type, id, title, image }).pipe(
       tap(res => {
         console.log(res);

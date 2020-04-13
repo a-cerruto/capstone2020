@@ -83,7 +83,6 @@ export class ShowsPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.backdrop = true;
     this.loading.getLoading('Updating Shows...').then();
-    if (this.userBrowseSettings) { this.fetchListings(true).then(); }
     this.settingsSubscription = this.user.areSettingsStored().subscribe(stored => {
       if (stored) {
         this.userBrowseSettings = this.user.getBrowseSettings();
@@ -141,7 +140,6 @@ export class ShowsPage implements OnInit, OnDestroy {
   }
 
   logView(show) {
-    console.log('logView()');
     this.portal.addView(this.user.getId(), this.type, show.id, show.title, show.artwork_304x171).then();
   }
 }
