@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 import { Storage } from '@ionic/storage';
 
@@ -14,6 +14,10 @@ export class PortalService {
   private readonly serverPort: string;
   private readonly serverHostName: string;
   private readonly serverAddress: string;
+
+  private viewsStored = new BehaviorSubject(false);
+  private watchedStored = new BehaviorSubject(false);
+  private savedStored = new BehaviorSubject(false);
 
   constructor(
     private http: HttpClient,
@@ -42,7 +46,7 @@ export class PortalService {
   async views(userId, storageKey, checkStorage) {
     if (checkStorage) {
       const results = await this.getStorage(storageKey);
-      return results ? results : await this.views(userId, storageKey, checkStorage);
+      results ? this.viewsStored.next(true) : await this.views(userId, storageKey, !checkStorage);
     } else {
       await this.fetchViews(userId, storageKey).subscribe({
         next: async res => res,
@@ -57,54 +61,86 @@ export class PortalService {
         console.log(res);
         if (res) {
           await this.setStorage(storageKey, res);
+          this.viewsStored.next(true);
         }
       })
     );
   }
 
-  async watched(userId, resume, storageKey, checkStorage) {
+  async addView(userId, type, id, title, image) {
+    console.log('addView()');
+    await this.postView(userId, type, id, title, image).subscribe({
+      next: async res => res,
+      error: err => console.log(err)
+    });
+  }
+
+  postView(userId, type, id, title, image) {
+    console.log('postView()');
+    return this.http.post(this.serverAddress + '/views/add', { userId, type, id, title, image }).pipe(
+      tap(res => {
+        console.log(res);
+      })
+    );
+  }
+
+  async watched(userId, storageKey, checkStorage) {
     if (checkStorage) {
       const results = await this.getStorage(storageKey);
-      return results ? results : await this.watched(userId, resume, storageKey, checkStorage);
+      return results ? results : await this.watched(userId, storageKey, checkStorage);
     } else {
-      await this.fetchWatched(userId, resume, storageKey).subscribe({
+      await this.fetchWatched(userId, storageKey).subscribe({
         next: async res => res,
         error: err => console.log(err)
       });
     }
   }
 
-  fetchWatched(userId, resume, storageKey): Observable<any> {
-    return this.http.post(this.serverAddress + '/watched', { userId, resume }).pipe(
+  fetchWatched(userId, storageKey): Observable<any> {
+    return this.http.post(this.serverAddress + '/watched', { userId }).pipe(
       tap(async (res: any) => {
         console.log(res);
         if (res) {
           await this.setStorage(storageKey, res);
+          this.watchedStored.next(true);
         }
       })
     );
   }
 
-  async saved(userId, type, storageKey, checkStorage) {
+  async saved(userId, storageKey, checkStorage) {
     if (checkStorage) {
       const results = await this.getStorage(storageKey);
-      return results ? results : await this.saved(userId, type, storageKey, checkStorage);
+      return results ? results : await this.saved(userId, storageKey, checkStorage);
     } else {
-      await this.fetchSaved(userId, type, storageKey).subscribe({
+      await this.fetchSaved(userId, storageKey).subscribe({
         next: async res => res,
         error: err => console.log(err)
       });
     }
   }
 
-  fetchSaved(userId, type, storageKey): Observable<any> {
-    return this.http.post(this.serverAddress + '/saved', { userId, type }).pipe(
+  fetchSaved(userId, storageKey): Observable<any> {
+    return this.http.post(this.serverAddress + '/saved', { userId }).pipe(
       tap(async (res: any) => {
         console.log(res);
         if (res) {
           await this.setStorage(storageKey, res);
+          this.savedStored.next(true);
         }
       })
     );
+  }
+
+  areViewsStored() {
+    return this.viewsStored.asObservable();
+  }
+
+  isWatchedStored() {
+    return this.watchedStored.asObservable();
+  }
+
+  isSavedStored() {
+    return this.savedStored.asObservable();
   }
 }

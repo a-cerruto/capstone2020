@@ -9,11 +9,15 @@
 
 <ion-content>
 
+  <ion-refresher slot="fixed" (ionRefresh)="refreshPage($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <ion-backdrop *ngIf="backdrop" tappable="false" style="opacity:100%"></ion-backdrop>
 
   <ion-searchbar></ion-searchbar>
 
-  <div *ngIf="results">
+  <div *ngIf="results && results.length > 0">
     <div *ngFor="let section of results; let i = index">
       <ion-item-divider mode="md">
         <ion-label>{{ sectionHeadings[i] }}</ion-label>

@@ -7,6 +7,7 @@ import { ToastService } from '../../global/services/toast.service';
 
 import { UserService } from '../../membership/authentication/user.service';
 import { ResultsService } from '../services/results.service';
+import { PortalService } from '../portal/portal.service';
 
 import { Option } from '../../settings/interfaces/option';
 import { SettingsBrowse } from '../../settings/interfaces/settings-browse';
@@ -41,7 +42,8 @@ export class ShowsPage implements OnInit, OnDestroy {
     private loading: LoadingService,
     private toast: ToastService,
     private user: UserService,
-    private resultsService: ResultsService
+    private resultsService: ResultsService,
+    private portal: PortalService
   ) {
     this.slideOptions = {
       spaceBetween: 0,
@@ -136,5 +138,10 @@ export class ShowsPage implements OnInit, OnDestroy {
   }
 
   fetchNextResults(index) {
+  }
+
+  logView(show) {
+    console.log('logView()');
+    this.portal.addView(this.user.getId(), this.type, show.id, show.title, show.artwork_304x171).then();
   }
 }

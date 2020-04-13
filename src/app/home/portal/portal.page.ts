@@ -16,18 +16,20 @@ import { PortalService } from './portal.service';
 export class PortalPage implements OnInit, OnDestroy {
 
   private results: any[];
-  private sectionHeadings: string[];
+  private sectionHeadings = [];
   private resultsNeeded: number;
   private backdrop: boolean;
   private slideOptions: any;
 
+  private viewsSub: any;
+  private watchedSub: any;
+  private savedSub: any;
+
   private readonly defaultSections = ['Keep Watching', 'Recent History', 'Saved For Later', 'Favorites', 'Watch Again'];
   private readonly resultLimit = 10;
-  private readonly keepWatchingKey = 'KEEP_WATCHING';
-  private readonly recentHistoryKey = 'RECENT_HISTORY';
-  private readonly savedForLaterKey = 'SAVED_FOR_LATER';
-  private readonly savedFavoritesKey = 'SAVED_FAVORITES';
-  private readonly watchAgainKey = 'WATCH_AGAIN';
+  private readonly viewsHistoryKey = 'VIEWS_HISTORY';
+  private readonly watchHistoryKey = 'WATCH_HISTORY';
+  private readonly savedHistoryKey = 'SAVED_HISTORY';
 
   constructor(
     private router: Router,
@@ -73,12 +75,64 @@ export class PortalPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.backdrop = true;
-    this.loading.getLoading('Connecting to ' + this.user.getUsername() + '\'s Portal...').then();
-    this.fetchListings(false).then();
+    this.viewsSub = this.portal.areViewsStored().subscribe(async stored => {
+      if (stored) {
+        this.fetchStoredListing(this.viewsHistoryKey).then(listing => {
+          if (listing) {
+            this.addSection(listing, 'Recently Viewed');
+          }
+        });
+      }
+    });
+    this.watchedSub = this.portal.isWatchedStored().subscribe(async stored => {
+      if (stored) {
+        this.fetchStoredListing(this.watchHistoryKey).then(listing => {
+          if (listing) {
+            console.log(listing);
+          }
+        });
+      }
+    });
+    this.savedSub = this.portal.isSavedStored().subscribe(async stored => {
+      if (stored) {
+        this.fetchStoredListing(this.savedHistoryKey).then(listing => {
+          if (listing) {
+            console.log(listing);
+          }
+        });
+      }
+    });
   }
 
   ngOnDestroy() {
+    this.viewsSub.unsubscribe();
+    this.watchedSub.unsubscribe();
+    this.savedSub.unsubscribe();
+  }
+
+  ionViewWillEnter() {
+    this.loading.getLoading('Connecting to ' + this.user.getUsername() + '\'s Portal...').then();
+    this.fetchListings(true).then();
+  }
+
+  async fetchListings(checkStorage: boolean) {
+    this.backdrop = true;
+    this.results = [];
+    this.sectionHeadings = [];
+    this.resultsNeeded = 0;
+    this.portal.views(this.user.getId(), this.viewsHistoryKey, checkStorage).then();
+    this.portal.watched(this.user.getId(), this.watchHistoryKey, checkStorage).then();
+  }
+
+  async fetchStoredListing(storageKey) {
+    await this.storage.ready();
+    return await this.storage.get(storageKey);
+  }
+
+  addSection(listing, title) {
+    this.results.push(listing);
+    this.sectionHeadings.push(title);
+    this.resultsNeeded += 1;
   }
 
   slidesLoaded() {
@@ -90,18 +144,13 @@ export class PortalPage implements OnInit, OnDestroy {
     }
   }
 
-  async fetchListings(checkStorage: boolean) {
-    this.results = [];
-    this.sectionHeadings = [...this.defaultSections];
-    this.resultsNeeded = 5;
-    await this.results.push(await this.portal.watched(this.user.getId(), true, this.keepWatchingKey, checkStorage));
-    await this.results.push(await this.portal.views(this.user.getId(), this.recentHistoryKey, checkStorage));
-    await this.results.push(await this.portal.saved(this.user.getId(), 'for_later', this.savedForLaterKey, checkStorage));
-    await this.results.push(await this.portal.saved(this.user.getId(), 'favorites', this.savedFavoritesKey, checkStorage));
-    await this.results.push(await this.portal.watched(this.user.getId(), false, this.watchAgainKey, checkStorage));
+  fetchNextResults(index) {
   }
 
-  fetchNextResults(index) {
+  refreshPage(event) {
+    this.fetchListings(false).then(() => {
+      event.target.complete();
+    });
   }
 
 }
