@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 
 import { Storage } from '@ionic/storage';
 
-import { ServerService } from '../../services/server.service';
 import { UserService } from '../../../membership/authentication/user.service';
 
 @Component({
@@ -25,7 +24,6 @@ export class MoviePage implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private storage: Storage,
-    private server: ServerService,
     private user: UserService
   ) {
     this.loaded = false;
@@ -37,6 +35,7 @@ export class MoviePage implements OnInit {
   }
 
   ngOnInit() {
+    /*
     this.movieId = this.activatedRoute.snapshot.paramMap.get('movieId');
     this.server.getMovieDetails(this.movieId, this.movieKey).subscribe({
       next: async res => {
@@ -54,6 +53,7 @@ export class MoviePage implements OnInit {
         console.log(err.status);
       }
     });
+     */
   }
 
   async setDefaultSource() {

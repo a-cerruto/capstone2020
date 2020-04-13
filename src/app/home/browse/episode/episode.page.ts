@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 
 import { Storage } from '@ionic/storage';
 
-import { ServerService } from '../../services/server.service';
 import { UserService } from '../../../membership/authentication/user.service';
 
 @Component({
@@ -25,14 +24,13 @@ export class EpisodePage implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private storage: Storage,
-    private server: ServerService,
     private user: UserService
   ) {
     this.loaded = false;
   }
 
   ngOnInit() {
-    this.showName = this.activatedRoute.snapshot.paramMap.get('showName');
+    /* this.showName = this.activatedRoute.snapshot.paramMap.get('showName');
     this.episodeId = this.activatedRoute.snapshot.paramMap.get('episodeId');
     this.server.getEpisodeDetails(this.episodeId).subscribe({
       next: async res => {
@@ -50,6 +48,7 @@ export class EpisodePage implements OnInit {
         console.log(err.status);
       }
     });
+     */
   }
 
   async setDefaultSource() {

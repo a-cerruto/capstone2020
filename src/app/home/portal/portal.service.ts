@@ -49,7 +49,7 @@ export class PortalService {
       results ? this.viewsStored.next(true) : await this.views(userId, storageKey, !checkStorage);
     } else {
       await this.fetchViews(userId, storageKey).subscribe({
-        next: async res => res,
+        next: res => res,
         error: err => console.log(err)
       });
     }
@@ -69,7 +69,7 @@ export class PortalService {
 
   async addView(userId, type, id, title, image) {
     await this.postView(userId, type, id, title, image).subscribe({
-      next: async res => res,
+      next: res => res,
       error: err => console.log(err)
     });
   }
@@ -85,10 +85,10 @@ export class PortalService {
   async watched(userId, storageKey, checkStorage) {
     if (checkStorage) {
       const results = await this.getStorage(storageKey);
-      return results ? results : await this.watched(userId, storageKey, checkStorage);
+      results ? this.watchedStored.next(true) : await this.watched(userId, storageKey, !checkStorage);
     } else {
       await this.fetchWatched(userId, storageKey).subscribe({
-        next: async res => res,
+        next: res => res,
         error: err => console.log(err)
       });
     }
@@ -109,10 +109,10 @@ export class PortalService {
   async saved(userId, storageKey, checkStorage) {
     if (checkStorage) {
       const results = await this.getStorage(storageKey);
-      return results ? results : await this.saved(userId, storageKey, checkStorage);
+      results ? this.savedStored.next(true) : await this.saved(userId, storageKey, checkStorage);
     } else {
       await this.fetchSaved(userId, storageKey).subscribe({
-        next: async res => res,
+        next: res => res,
         error: err => console.log(err)
       });
     }

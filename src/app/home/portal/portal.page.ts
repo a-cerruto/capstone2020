@@ -122,6 +122,7 @@ export class PortalPage implements OnInit, OnDestroy {
     this.resultsNeeded = 0;
     this.portal.views(this.user.getId(), this.viewsHistoryKey, checkStorage).then();
     this.portal.watched(this.user.getId(), this.watchHistoryKey, checkStorage).then();
+    this.portal.saved(this.user.getId(), this.savedHistoryKey, checkStorage).then();
   }
 
   async fetchStoredListing(storageKey) {

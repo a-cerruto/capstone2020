@@ -9,6 +9,10 @@
 
 <ion-content>
 
+  <ion-refresher slot="fixed" (ionRefresh)="refreshPage($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <ion-backdrop *ngIf="backdrop" tappable="false" style="opacity:100%"></ion-backdrop>
 
   <ion-searchbar></ion-searchbar>
