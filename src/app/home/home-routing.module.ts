@@ -8,20 +8,29 @@ const routes: Routes = [
     component: HomePage,
     children: [
       {
-        path: 'browse',
+        path: 'shows',
         children: [
           {
             path: '',
-            loadChildren: () => import('./browse/browse.module').then( m => m.BrowsePageModule)
+            loadChildren: () => import('./shows/shows.module').then( m => m.ShowsPageModule)
           }
         ]
       },
       {
-        path: 'list',
+        path: 'movies',
         children: [
           {
             path: '',
-            loadChildren: () => import('./list/list.module').then( m => m.ListPageModule)
+            loadChildren: () => import('./movies/movies.module').then( m => m.MoviesPageModule)
+          }
+        ]
+      },
+      {
+        path: 'portal',
+        children: [
+          {
+            path: '',
+            loadChildren: () => import('./portal/portal.module').then( m => m.PortalPageModule)
           }
         ]
       },
@@ -36,14 +45,14 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/home/browse',
+        redirectTo: '/home/shows',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/home/browse',
+    redirectTo: '/home/shows',
     pathMatch: 'full'
   }
 ];

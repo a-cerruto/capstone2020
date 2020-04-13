@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ServerService } from './server.service';
+import { PortalService } from './portal.service';
 
-describe('ServerService', () => {
+describe('PortalService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: ServerService = TestBed.get(ServerService);
+    const service: PortalService = TestBed.get(PortalService);
     expect(service).toBeTruthy();
   });
 });

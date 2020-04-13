@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import { Storage } from '@ionic/storage';
 
@@ -17,16 +17,15 @@ import { SettingsBrowse } from '../../settings/interfaces/settings-browse';
 export class UserService {
 
   private loggedIn = false;
+  private settingsStored = new BehaviorSubject(false);
 
   private id: number;
   private email: string;
   private username: string;
-  private browserSettings: SettingsBrowse;
+  private browseSettings: SettingsBrowse;
 
-  private readonly userKey: string;
-  private readonly browserSettingsKey: string;
+  private readonly userKey = 'USER';
 
-  private settingsStored = new BehaviorSubject(false);
 
   constructor(
       private router: Router,
@@ -36,14 +35,11 @@ export class UserService {
       private authentication: AuthenticationService,
       private settings: SettingsService
   ) {
-    this.userKey = 'USER';
-    this.browserSettingsKey = 'BROWSER_SETTINGS';
-
     this.authentication.isLoggedIn().subscribe(async loggedIn => {
       console.log('User is logged in: ' + loggedIn);
       this.loggedIn = loggedIn;
       if (this.loggedIn) {
-        this.getDetails();
+         this.initDetails();
       }
     });
   }
@@ -54,8 +50,6 @@ export class UserService {
 
   async logout() {
     await this.loading.getLoading('Logging out...');
-    await this.storage.remove(this.browserSettingsKey);
-    this.settingsStored.next(false);
     await this.authentication.logout();
     await this.loading.dismiss();
     await this.router.navigateByUrl('/login');
@@ -65,38 +59,30 @@ export class UserService {
     return this.loggedIn;
   }
 
-  getDetails() {
+  initDetails() {
     let user;
     this.storage.ready().then(async () => {
-      while (!user) { user = await this.storage.get(this.userKey); }
+      user = await this.storage.get(this.userKey);
       this.id = user.id;
       this.email = user.email;
       this.username = user.username;
-      console.log('user: ' + user);
+      console.log('user: ' + JSON.stringify(user));
       console.log('id: ' + this.id);
       console.log('email: ' + this.email);
       console.log('username: ' + this.username);
-
-      this.settings.getDefaultBrowserSettings(this.id).subscribe({
-        next: res => {
-          let settings;
-          this.storage.ready().then(async () => {
-            while (!settings) { settings = await this.storage.get(this.browserSettingsKey); }
-            this.browserSettings = settings;
-            this.settingsStored.next(true);
-            console.log(this.browserSettings);
-          });
-        },
-        error: err => {
-          console.log(err.status);
-          this.toast.showError(err.status);
-        }
-      });
+      this.initSettings();
     });
   }
 
-  areSettingsStored() {
-    return this.settingsStored.asObservable();
+  initSettings() {
+    this.settings.getBrowseSettings(this.id).subscribe({
+      next: (res: SettingsBrowse) => {
+        this.storeSettings(res);
+      },
+      error: err => {
+        this.handleError(err);
+      }
+    });
   }
 
   getId() {
@@ -107,12 +93,61 @@ export class UserService {
     return this.email;
   }
 
+  setEmail(value) {
+    return this.authentication.updateDetails(this.id, 'email', value);
+  }
+
   getUsername() {
     return this.username;
   }
 
-  getBrowserSettings() {
-    return this.browserSettings;
+  setUsername(value) {
+    return this.authentication.updateDetails(this.id, 'username', value);
+  }
+
+  setPassword(value) {
+    return this.authentication.updateDetails(this.id, 'password', value);
+  }
+
+  areSettingsStored() {
+    return this.settingsStored.asObservable();
+  }
+
+  getBrowseSettings() {
+    return this.browseSettings;
+  }
+
+  storeSettings(settings) {
+    console.log(settings);
+    this.browseSettings = settings;
+    this.settingsStored.next(true);
+  }
+
+  setBrowseSettings(key, value) {
+    return this.settings.updateBrowseSettings(this.id, key, value.toString()).subscribe({
+      next: (res: SettingsBrowse) => {
+        this.storeSettings(res);
+      },
+      error: err => {
+        this.handleError(err);
+      }
+    });
+  }
+
+  setOptionsSettings(type, options) {
+    return this.settings.updateOptionsSettings(this.id, type, options).subscribe( {
+      next: (res: SettingsBrowse) => {
+        this.storeSettings(res);
+      },
+      error: err => {
+        this.handleError(err);
+      }
+    });
+  }
+
+  handleError(error) {
+    console.log(error.status);
+    this.toast.showError(error.status);
   }
 
 }

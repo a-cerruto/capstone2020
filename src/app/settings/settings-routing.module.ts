@@ -9,8 +9,8 @@ const routes: Routes = [
     component: SettingsPage
   },
   {
-    path: 'browse',
-    loadChildren: () => import('./browse/browse.module').then( m => m.BrowsePageModule)
+    path: 'account',
+    loadChildren: () => import('../membership/account/account.module').then(m => m.AccountPageModule)
   }
 ];
 

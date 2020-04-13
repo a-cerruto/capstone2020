@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Movies</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshPage($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-backdrop *ngIf="backdrop" tappable="false" style="opacity:100%"></ion-backdrop>
+
+  <ion-searchbar></ion-searchbar>
+
+  <div *ngIf="results">
+    <div *ngFor="let section of results; let i = index">
+      <ion-item-divider mode="md">
+        <ion-label>{{ sectionHeadings[i] }}</ion-label>
+      </ion-item-divider>
+      <ion-item lines="none">
+        <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()" (ionSlideReachEnd)="fetchNextResults(i)">
+          <ion-slide *ngFor="let result of section">
+            <ion-item detail="false" lines="none" button="true" (click)="logView(result)" [routerDirection]="'forward'">
+              <img style="border-radius: 4px;" src="{{ result.poster_240x342 }}" alt="{{ result.title }}"/>
+            </ion-item>
+          </ion-slide>
+        </ion-slides>
+      </ion-item>
+    </div>
+  </div>
+
+</ion-content>

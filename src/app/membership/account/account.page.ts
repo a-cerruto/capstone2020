@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Storage } from '@ionic/storage';
 import { FormGroup } from '@angular/forms';
-import { LoadingService } from '../global/services/loading.service';
-import { ToastService } from '../global/services/toast.service';
-import { FormService } from '../global/services/form.service';
-import { AccountService } from './account.service';
-import { UserService } from '../membership/authentication/user.service';
+
+import { FormService } from '../../global/services/form.service';
+import { LoadingService } from '../../global/services/loading.service';
+import {ToastService} from '../../global/services/toast.service';
+
+import {UserService} from '../authentication/user.service';
 
 @Component({
   selector: 'app-account',
@@ -26,11 +25,8 @@ export class AccountPage implements OnInit {
   private buttonPressed: boolean;
 
   constructor(
-    private router: Router,
-    private storage: Storage,
     private loading: LoadingService,
     private toast: ToastService,
-    private account: AccountService,
     private user: UserService
   ) {
     this.emailForm = FormService.emailForm();
@@ -70,14 +66,11 @@ export class AccountPage implements OnInit {
   async updateEmail(form) {
     this.buttonPressed = true;
     await this.loading.getLoading('Updating Email...');
-    const value = form.value;
-    const id = this.user.getId();
-    this.account.updateEmail({value, id}).subscribe( {
+    this.user.setEmail(form.value).subscribe( {
       next: async res => {
         console.log(res);
         this.loading.dismiss().then(() => {
-          this.router.navigateByUrl('/account');
-          this.toast.showSuccess('Email has been updated to ' + value.email);
+          this.toast.showSuccess('Email has been updated to ' + res.email);
           this.resetButtons();
         });
       },
@@ -94,14 +87,11 @@ export class AccountPage implements OnInit {
   async updateUsername(form) {
     this.buttonPressed = true;
     await this.loading.getLoading('Updating Username...');
-    const value = form.value;
-    const id = this.user.getId();
-    this.account.updateUsername({value, id}).subscribe({
+    this.user.setUsername(form.value).subscribe({
       next: async res => {
         console.log(res);
         this.loading.dismiss().then(() => {
-          this.router.navigateByUrl('/account');
-          this.toast.showSuccess('Username has been updated to ' + value.username);
+          this.toast.showSuccess('Username has been updated to ' + res.username);
           this.resetButtons();
         });
       },
@@ -118,16 +108,12 @@ export class AccountPage implements OnInit {
   async updatePassword(form) {
     this.buttonPressed = true;
     await this.loading.getLoading('Updating Password');
-    const value = form.value;
-    const id = this.user.getId();
-    this.account.updatePassword({value, id}).subscribe({
+    this.user.setPassword(form.value).subscribe({
       next: async res => {
         console.log(res);
         this.loading.dismiss().then(() => {
-          this.router.navigateByUrl('/account').then(() => {
-            this.toast.showSuccess('Password has been successfully updated!');
-            this.resetButtons();
-          });
+          this.toast.showSuccess('Password has been successfully updated!');
+          this.resetButtons();
         });
       },
       error: async err => {
