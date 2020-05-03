@@ -12,12 +12,13 @@ export class SubscriptionsPage implements OnInit {
   private subscriptions: Array<string>;
 
   private providers: Array<string> = [
+    'Amazon Prime',
+    'HBO Now',
+    'Hulu+',
     'Netflix',
-    'ShowTime',
-    'Prime Video',
-    'Starz',
-    'Hulu',
-    'HBO'
+    'Apple TV+',
+    'CBS All Access',
+    'Disney+'
   ];
 
   private lastSelected: string;
