@@ -12,6 +12,8 @@ import { PortalService } from '../portal/portal.service';
 import { Option } from '../../settings/interfaces/option';
 import { SettingsBrowse } from '../../settings/interfaces/settings-browse';
 
+import {SubscriptionsService} from '../subscriptions/subscriptions.service';
+
 @Component({
   selector: 'app-shows',
   templateUrl: './shows.page.html',
@@ -31,6 +33,7 @@ export class ShowsPage implements OnInit, OnDestroy {
   private resultsNeeded: number;
   private backdrop: boolean;
   private slideOptions: any;
+  private subscriptions: any[];
 
   private readonly resultLimit = 10;
   private readonly featuredResultsKey = 'FEATURED_SHOWS';
@@ -44,7 +47,8 @@ export class ShowsPage implements OnInit, OnDestroy {
     private toast: ToastService,
     private user: UserService,
     private resultsService: ResultsService,
-    private portal: PortalService
+    private portal: PortalService,
+    private subscriptionsService: SubscriptionsService
   ) {
     this.slideOptions = {
       spaceBetween: 0,
@@ -82,6 +86,7 @@ export class ShowsPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.getSubs();
     this.settingsSub = this.user.areSettingsStored().subscribe(stored => {
       if (stored) {
         this.userBrowseSettings = this.user.getBrowseSettings();
@@ -100,10 +105,13 @@ export class ShowsPage implements OnInit, OnDestroy {
     });
     this.channelsSub = this.resultsService.areChannelShowsStored().subscribe(stored => {
       if (stored) {
+        let subscriptionSet = new Set(this.subscriptions);
         this.channels.forEach(channel => {
-          this.fetchStoredListing(this.channelResultsBaseKey + channel.value).then(result => {
-            this.addSection(result, channel.title);
-          });
+          if(subscriptionSet.has(channel.title)){
+            this.fetchStoredListing(this.channelResultsBaseKey + channel.value).then(result => {
+              this.addSection(result, channel.title);
+            });
+          }
         });
       }
     });
@@ -113,6 +121,12 @@ export class ShowsPage implements OnInit, OnDestroy {
     this.settingsSub.unsubscribe();
     this.featuredSub.unsubscribe();
     this.channelsSub.unsubscribe();
+  }
+
+  async getSubs() {
+    await this.subscriptionsService.currentSubs(this.user.getId()).toPromise().then(data => {
+      this.subscriptions = data['subscriptions'];
+    });
   }
 
   slidesLoaded() {
