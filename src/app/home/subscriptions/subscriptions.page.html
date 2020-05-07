@@ -46,14 +46,14 @@
     <br>
     <ion-row>
       <ion-col><header>Recommendations</header></ion-col>
-      <p class="text">Based off your watch history, scores have been assigned to your current subscriptions. You must be subscribed for at least one month to receive scores for a provider.</p>
+      <p class="text">Based off your watch history in the past month, scores have been assigned to your current subscriptions.</p>
     </ion-row>
     <ion-row>
       <ion-col>
         <ion-list>
-          <ion-item *ngFor="let subscription of subscriptions">
-            <ion-label>{{subscription}}</ion-label>
-            <ion-note slot="end" color="primary">99</ion-note>
+          <ion-item *ngFor="let recommendationScore of recommendationScores">
+            <ion-label>{{recommendationScore.provider}}</ion-label>
+            <ion-note slot="end" color="primary">{{recommendationScore.score}}</ion-note>
           </ion-item>
         </ion-list>
       </ion-col>      

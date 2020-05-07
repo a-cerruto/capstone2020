@@ -32,4 +32,9 @@ export class SubscriptionsService {
   removeSub(id: number, provider: string) {
     return this.http.delete(this.serverAddress + '/' + id + '/' + provider);
   }
+
+  getRecommendations(id: number, subscriptions: string[]) {
+    console.log(subscriptions);
+    return this.http.post(this.serverProtocol + this.serverHostName + ':3000/portal/recommendations', {id, subscriptions});
+  }
 }
