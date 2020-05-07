@@ -88,7 +88,7 @@ export class PortalPage implements OnInit, OnDestroy {
       if (stored) {
         this.fetchStoredListing(this.watchHistoryKey).then(listing => {
           if (listing) {
-            console.log(listing);
+            this.addSection(listing, 'Watch Again');
           }
         });
       }
@@ -97,7 +97,7 @@ export class PortalPage implements OnInit, OnDestroy {
       if (stored) {
         this.fetchStoredListing(this.savedHistoryKey).then(listing => {
           if (listing) {
-            console.log(listing);
+            this.addSection(listing, 'Saved For Later');
           }
         });
       }

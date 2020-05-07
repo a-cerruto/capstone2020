@@ -54,6 +54,10 @@ const routes: Routes = [
     path: '',
     redirectTo: '/home/shows',
     pathMatch: 'full'
+  },
+  {
+    path: 'view',
+    loadChildren: () => import('./browse/view/view.module').then( m => m.ViewPageModule)
   }
 ];
 
