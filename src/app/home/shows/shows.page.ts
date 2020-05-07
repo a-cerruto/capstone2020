@@ -177,8 +177,8 @@ export class ShowsPage implements OnInit, OnDestroy {
     }
   }
 
-  logView(show) {
-    this.portal.addView(this.user.getId(), this.type, show.id, show.title, show.artwork_304x171, this.recentlyViewedKey).then(() => {
+  logView(show, sectionHeading) {
+    this.portal.addView(this.user.getId(), this.type, show.id, show.title, show.artwork_304x171, sectionHeading, this.recentlyViewedKey).then(() => {
       this.navCtrl.navigateForward('/view').then();
     });
   }

@@ -178,8 +178,8 @@ export class MoviesPage implements OnInit, OnDestroy {
     }
   }
 
-  logView(movie) {
-    this.portal.addView(this.user.getId(), this.type, movie.id, movie.title, movie.poster_240x342, this.recentlyViewedKey).then(() => {
+  logView(movie, sectionHeading) {
+    this.portal.addView(this.user.getId(), this.type, movie.id, movie.title, movie.poster_240x342, sectionHeading, this.recentlyViewedKey).then(() => {
       this.navCtrl.navigateForward('/view').then();
     });
   }

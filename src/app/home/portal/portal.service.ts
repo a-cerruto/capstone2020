@@ -68,18 +68,18 @@ export class PortalService {
     );
   }
 
-  async addView(userId, type, id, title, image, storageKey) {
+  async addView(userId, type, id, title, image, provider, storageKey) {
     await this.storage.ready();
-    await this.storage.set(storageKey, [type, id, title, image]);
+    await this.storage.set(storageKey, [type, id, title, image, provider]);
     this.recentlyViewedStored.next(true);
-    await this.postView(userId, type, id, title, image).subscribe({
+    await this.postView(userId, type, id, title, image, provider).subscribe({
       next: res => res,
       error: err => console.log(err)
     });
   }
 
-  postView(userId, type, id, title, image) {
-    return this.http.post(this.serverAddress + '/views/add', { userId, type, id, title, image }).pipe(
+  postView(userId, type, id, title, image, provider) {
+    return this.http.post(this.serverAddress + '/views/add', { userId, type, id, title, image, provider }).pipe(
       tap(res => {
         console.log(res);
       })
@@ -110,15 +110,15 @@ export class PortalService {
     );
   }
 
-  async addWatched(userId, type, id, title, image) {
-    await this.postWatched(userId, type, id, title, image).subscribe({
+  async addWatched(userId, type, id, title, image, provider) {
+    await this.postWatched(userId, type, id, title, image, provider).subscribe({
       next: res => res,
       error: err => console.log(err)
     });
   }
 
-  postWatched(userId, type, id, title, image) {
-    return this.http.post(this.serverAddress + '/watched/add', { userId, type, id, title, image }).pipe(
+  postWatched(userId, type, id, title, image, provider) {
+    return this.http.post(this.serverAddress + '/watched/add', { userId, type, id, title, image, provider }).pipe(
       tap(res => {
         console.log(res);
       })

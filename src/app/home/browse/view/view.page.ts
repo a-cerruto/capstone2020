@@ -45,7 +45,7 @@ export class ViewPage implements OnInit, OnDestroy {
   }
 
   addWatched(result) {
-    this.portal.addWatched(this.user.getId(), result[0], result[1], result[2], result[3]).then(() => {
+    this.portal.addWatched(this.user.getId(), result[0], result[1], result[2], result[3], result[4]).then(() => {
       this.toast.showSuccess('Successfully Added!');
     });
   }
