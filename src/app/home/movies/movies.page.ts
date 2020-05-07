@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router} from '@angular/router';
+import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 
 import { LoadingService } from '../../global/services/loading.service';
@@ -39,9 +40,11 @@ export class MoviesPage implements OnInit, OnDestroy {
   private readonly featuredResultsKey = 'FEATURED_MOVIES';
   private readonly newResultsKey = 'NEW_MOVIES';
   private readonly channelResultsBaseKey = 'MOVIES_';
+  private readonly recentlyViewedKey = 'RECENTLY_VIEWED';
 
   constructor(
     private router: Router,
+    private navCtrl: NavController,
     private storage: Storage,
     private loading: LoadingService,
     private toast: ToastService,
@@ -176,7 +179,9 @@ export class MoviesPage implements OnInit, OnDestroy {
   }
 
   logView(movie) {
-    this.portal.addView(this.user.getId(), this.type, movie.id, movie.title, movie.poster_240x342).then();
+    this.portal.addView(this.user.getId(), this.type, movie.id, movie.title, movie.poster_240x342, this.recentlyViewedKey).then(() => {
+      this.navCtrl.navigateForward('/view').then();
+    });
   }
 
   fetchNextResults(index) {
