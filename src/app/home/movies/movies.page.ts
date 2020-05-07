@@ -36,6 +36,7 @@ export class MoviesPage implements OnInit, OnDestroy {
   private readonly featuredResultsKey = 'FEATURED_MOVIES';
   private readonly newResultsKey = 'NEW_MOVIES';
   private readonly channelResultsBaseKey = 'MOVIES_';
+  private readonly recentlyViewedKey = 'RECENTLY_VIEWED';
 
   constructor(
     private router: Router,
@@ -162,7 +163,7 @@ export class MoviesPage implements OnInit, OnDestroy {
   }
 
   logView(movie) {
-    this.portal.addView(this.user.getId(), this.type, movie.id, movie.title, movie.poster_240x342).then();
+    this.portal.addView(this.user.getId(), this.type, movie.id, movie.title, movie.poster_240x342, this.recentlyViewedKey).then();
   }
 
   fetchNextResults(index) {

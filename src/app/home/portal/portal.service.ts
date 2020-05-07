@@ -16,6 +16,7 @@ export class PortalService {
   private readonly serverAddress: string;
 
   private viewsStored = new BehaviorSubject(false);
+  private recentlyViewedStored = new BehaviorSubject(false);
   private watchedStored = new BehaviorSubject(false);
   private savedStored = new BehaviorSubject(false);
 
@@ -67,7 +68,10 @@ export class PortalService {
     );
   }
 
-  async addView(userId, type, id, title, image) {
+  async addView(userId, type, id, title, image, storageKey) {
+    await this.storage.ready();
+    await this.storage.set(storageKey, [type, id, title, image]);
+    this.recentlyViewedStored.next(true);
     await this.postView(userId, type, id, title, image).subscribe({
       next: res => res,
       error: err => console.log(err)
@@ -106,6 +110,21 @@ export class PortalService {
     );
   }
 
+  async addWatched(userId, type, id, title, image) {
+    await this.postWatched(userId, type, id, title, image).subscribe({
+      next: res => res,
+      error: err => console.log(err)
+    });
+  }
+
+  postWatched(userId, type, id, title, image) {
+    return this.http.post(this.serverAddress + '/watched/add', { userId, type, id, title, image }).pipe(
+      tap(res => {
+        console.log(res);
+      })
+    );
+  }
+
   async saved(userId, storageKey, checkStorage) {
     if (checkStorage) {
       const results = await this.getStorage(storageKey);
@@ -130,8 +149,27 @@ export class PortalService {
     );
   }
 
+  async addSaved(userId, type, id, title, image) {
+    await this.postSaved(userId, type, id, title, image).subscribe({
+      next: res => res,
+      error: err => console.log(err)
+    });
+  }
+
+  postSaved(userId, type, id, title, image) {
+    return this.http.post(this.serverAddress + '/saved/add', { userId, type, id, title, image }).pipe(
+      tap(res => {
+        console.log(res);
+      })
+    );
+  }
+
   areViewsStored() {
     return this.viewsStored.asObservable();
+  }
+
+  isRecentlyViewedStored() {
+    return this.recentlyViewedStored.asObservable();
   }
 
   isWatchedStored() {

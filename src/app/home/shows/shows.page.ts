@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router} from '@angular/router';
+import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 
 import { LoadingService } from '../../global/services/loading.service';
@@ -36,9 +37,11 @@ export class ShowsPage implements OnInit, OnDestroy {
   private readonly featuredResultsKey = 'FEATURED_SHOWS';
   private readonly newResultsKey = 'NEW_SHOWS';
   private readonly channelResultsBaseKey = 'SHOWS_';
+  private readonly recentlyViewedKey = 'RECENTLY_VIEWED';
 
   constructor(
     private router: Router,
+    private navCtrl: NavController,
     private storage: Storage,
     private loading: LoadingService,
     private toast: ToastService,
@@ -161,7 +164,9 @@ export class ShowsPage implements OnInit, OnDestroy {
   }
 
   logView(show) {
-    this.portal.addView(this.user.getId(), this.type, show.id, show.title, show.artwork_304x171).then();
+    this.portal.addView(this.user.getId(), this.type, show.id, show.title, show.artwork_304x171, this.recentlyViewedKey).then(() => {
+      this.navCtrl.navigateForward('/view').then();
+    });
   }
 
   fetchNextResults(index) {

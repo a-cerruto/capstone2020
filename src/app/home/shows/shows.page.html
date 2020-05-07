@@ -25,7 +25,7 @@
       <ion-item lines="none">
         <ion-slides [options]="slideOptions" (ionSlidesDidLoad)="slidesLoaded()" (ionSlideReachEnd)="fetchNextResults(i)">
           <ion-slide *ngFor="let result of section">
-            <ion-item detail="false" lines="none" button="true" (click)="logView(result)" [routerDirection]="'forward'">
+            <ion-item detail="false" lines="none" button="true" (click)="logView(result)">
               <img style="border-radius: 4px;" src="{{ result.artwork_304x171 }}" alt="{{ result.title }}"/>
             </ion-item>
           </ion-slide>
