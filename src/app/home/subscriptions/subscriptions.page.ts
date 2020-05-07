@@ -9,6 +9,10 @@ import { SubscriptionsService } from './subscriptions.service';
 })
 export class SubscriptionsPage implements OnInit {
 
+  ionViewWillEnter(){
+    this.configureSubs();
+  }
+
   private subscriptions: Array<string>;
   private recommendationScores: any;
 
